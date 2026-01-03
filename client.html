@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>NOVA - Espace Client</title>
+    
+    <link rel="manifest" href="manifest.json">
+    
+    <meta name="theme-color" content="#0a0a0a">
+    <meta name="mobile-web-app-capable" content="yes">
+    
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="NOVA">
+    
+    <link rel="icon" type="image/png" href="logo.png?v=2">
+    <link rel="apple-touch-icon" href="logo.png?v=2">
+    <link rel="apple-touch-icon" sizes="152x152" href="logo.png?v=2">
+    <link rel="apple-touch-icon" sizes="180x180" href="logo.png?v=2">
+    <link rel="apple-touch-icon" sizes="167x167" href="logo.png?v=2">
+    
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body { 
+            font-family: 'Montserrat', sans-serif; 
+            text-align: center; 
+            padding: 20px; 
+            background: #0a0a0a; 
+            background-image: url('https://www.transparenttextures.com/patterns/black-marble.png');
+            color: #D4AF37; 
+            min-height: 100vh;
+            display: flex; flex-direction: column; justify-content: center; align-items: center; margin: 0;
+            -webkit-user-select: none; user-select: none; /* Seçimi engelle */
+        }
+        
+        .logo-img { width: 150px; margin-bottom: 15px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.5)); }
+        
+        .card { 
+            background: rgba(20, 20, 20, 0.95); 
+            padding: 25px; 
+            border-radius: 20px; 
+            box-shadow: 0 8px 25px rgba(0,0,0,0.9); 
+            max-width: 380px; width: 90%;
+            border: 2px solid #D4AF37; 
+            position: relative;
+        }
+        
+        h2 { color: #D4AF37; margin-bottom: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; font-size: 18px;}
+        p { color: #aaa; font-size: 13px; margin-bottom: 20px; }
+        
+        input, textarea { 
+            width: 100%; padding: 14px; margin: 8px 0; 
+            background: rgba(255,255,255,0.08); border: 1px solid #555; 
+            border-radius: 10px; box-sizing: border-box; 
+            font-size: 15px; color: #fff; outline: none; transition: 0.3s; font-family: inherit;
+        }
+        input:focus, textarea:focus { border-color: #D4AF37; background: rgba(255,255,255,0.12); }
+        
+        button { 
+            background: linear-gradient(45deg, #D4AF37, #F2C94C); 
+            color: #000; border: none; padding: 15px; 
+            border-radius: 10px; cursor: pointer; width: 100%; 
+            font-size: 16px; font-weight: 800; margin-top: 15px; 
+            text-transform: uppercase; box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+        }
+        
+        .auth-tabs { display: flex; gap: 10px; margin-bottom: 20px; }
+        .tab-btn { background: transparent; color: #666; border: 1px solid #333; box-shadow: none; margin: 0; padding: 10px; font-size: 14px; }
+        .tab-btn.active { background: #D4AF37; color: #000; border-color: #D4AF37; }
+
+        #qr-container { display: none; }
+        #qrcode { 
+            display: flex; justify-content: center; margin: 15px 0; padding: 10px;
+            background: white; border-radius: 10px;
+        }
+        
+        .progress-wrapper { margin: 20px 0; text-align: left; }
+        .progress-title { font-size: 12px; color: #ccc; display: flex; justify-content: space-between; margin-bottom: 5px; }
+        .progress-container { width: 100%; background-color: #333; border-radius: 10px; height: 12px; overflow: hidden; }
+        .progress-bar { height: 100%; background: linear-gradient(90deg, #D4AF37, #f1c40f); width: 0%; transition: width 0.5s ease; }
+        .motivation-text { font-size: 13px; color: #fff; margin-top: 5px; font-style: italic; text-align: center;}
+
+        .quick-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; }
+        .action-btn { 
+            background: rgba(255,255,255,0.1); border: 1px solid #444; color: #fff; 
+            padding: 12px; border-radius: 8px; font-size: 12px; display: flex; 
+            align-items: center; justify-content: center; gap: 8px; text-decoration: none; 
+            margin-top: 0; box-shadow: none; font-weight: 600;
+        }
+        .action-btn:hover { background: rgba(212, 175, 55, 0.2); border-color: #D4AF37; }
+
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+
+    <img src="logo.png" alt="NOVA Logo" class="logo-img">
+
+    <div class="card" id="auth-container">
+        <div class="auth-tabs">
+            <button class="tab-btn active" onclick="switchTab('login')" id="btn-login">Connexion</button>
+            <button class="tab-btn" onclick="switchTab('register')" id="btn-register">Inscription</button>
+        </div>
+
+        <div id="login-form">
+            <h2>Bienvenue</h2>
+            <p>Connectez-vous pour voir vos points.</p>
+            <input type="tel" id="login-phone" placeholder="Numéro de Téléphone (ex: 06...)">
+            <button onclick="login()">Se Connecter</button>
+        </div>
+
+        <div id="register-form" class="hidden">
+            <h2>Créer un Compte</h2>
+            <input type="text" id="reg-name" placeholder="Nom et Prénom">
+            <input type="tel" id="reg-phone" placeholder="Numéro de Téléphone">
+            <textarea id="reg-address" placeholder="Votre Adresse" rows="2"></textarea>
+            <button onclick="register()">Créer ma Carte</button>
+        </div>
+    </div>
+
+    <div class="card" id="qr-container">
+        <h2 id="welcomeMsg" style="margin-bottom: 5px;"></h2>
+        
+        <div id="qrcode"></div>
+        <p style="margin-bottom:10px;">Présentez ce code en caisse.</p>
+        
+        <div class="progress-wrapper">
+            <div class="progress-title">
+                <span>Progression Cadeau</span>
+                <span id="pointsRatio">0/10</span>
+            </div>
+            <div class="progress-container">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+            <div class="motivation-text" id="motivationMsg">Encore 10 points pour un cadeau !</div>
+        </div>
+
+        <div style="display: flex; gap: 10px; border-top:1px solid #333; padding-top:15px;">
+            <div style="flex:1;">
+                <span style="font-size:20px; color:#D4AF37; font-weight:bold;" id="puanGoster">0</span><br>
+                <span style="font-size:10px; color:#888;">POINTS ACTUELS</span>
+            </div>
+            <div style="flex:1; border-left:1px solid #333;">
+                <span style="font-size:20px; color:#fff; font-weight:bold;" id="harcananGoster">0</span><br>
+                <span style="font-size:10px; color:#888;">POINTS UTILISÉS</span>
+            </div>
+        </div>
+        
+        <div class="quick-actions">
+            <a href="MENU_LINKI_BURAYA" target="_blank" class="action-btn">
+                <i class="fa-solid fa-utensils"></i> Le Menu
+            </a>
+            <a href="GOOGLE_MAPS_LINKI_BURAYA" target="_blank" class="action-btn">
+                <i class="fa-solid fa-location-dot"></i> Y aller
+            </a>
+            <a href="INSTAGRAM_LINKI_BURAYA" target="_blank" class="action-btn">
+                <i class="fa-brands fa-instagram"></i> Suivre
+            </a>
+            <a href="#" onclick="logout()" class="action-btn" style="border-color:#c0392b; color:#c0392b;">
+                <i class="fa-solid fa-right-from-bracket"></i> Sortir
+            </a>
+        </div>
+    </div>
+
+    <script>
+        // --- ⚠️ API KODLARINI BURAYA YAPIŞTIRIN ⚠️ ---
+        const firebaseConfig = {
+            apiKey: "AIzaSyDxizNLOTlYYm7CUSRLDrMRe7Q1pn2l1D4",
+            authDomain: "fidelite2-d521c.firebaseapp.com",
+            projectId: "fidelite2-d521c",
+            storageBucket: "fidelite2-d521c.firebasestorage.app",
+            messagingSenderId: "787733255176",
+            appId: "1:787733255176:web:df3a493d405f4b67b92dbd"
+        };
+        // ----------------------------------------------
+
+        // LİNKLERİ GÜNCELLEYİN
+        const LINKS = {
+            menu: "https://www.google.com",
+            maps: "https://maps.google.com/?q=NOVA+Kebab",
+            instagram: "https://instagram.com"
+        };
+
+        document.querySelector('a[href="MENU_LINKI_BURAYA"]').href = LINKS.menu;
+        document.querySelector('a[href="GOOGLE_MAPS_LINKI_BURAYA"]').href = LINKS.maps;
+        document.querySelector('a[href="INSTAGRAM_LINKI_BURAYA"]').href = LINKS.instagram;
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        function switchTab(tab) {
+            if(tab === 'login') {
+                document.getElementById('login-form').classList.remove('hidden');
+                document.getElementById('register-form').classList.add('hidden');
+                document.getElementById('btn-login').classList.add('active');
+                document.getElementById('btn-register').classList.remove('active');
+            } else {
+                document.getElementById('login-form').classList.add('hidden');
+                document.getElementById('register-form').classList.remove('hidden');
+                document.getElementById('btn-login').classList.remove('active');
+                document.getElementById('btn-register').classList.add('active');
+            }
+        }
+
+        function login() {
+            const phone = document.getElementById('login-phone').value.trim();
+            if(!phone) return alert("Veuillez entrer votre numéro.");
+            const btn = document.querySelector("#login-form button");
+            btn.innerText = "Vérification...";
+            db.collection("musteriler").doc(phone).get().then((doc) => {
+                if(doc.exists) { openDashboard(doc.data().ad, phone, doc.data().puan, doc.data().harcanan || 0); } 
+                else { alert("Numéro introuvable."); switchTab('register'); document.getElementById('reg-phone').value = phone; }
+                btn.innerText = "Se Connecter";
+            }).catch(err => { alert("Erreur: " + err.message); btn.innerText = "Se Connecter"; });
+        }
+
+        function register() {
+            const name = document.getElementById('reg-name').value.trim();
+            const phone = document.getElementById('reg-phone').value.trim();
+            const address = document.getElementById('reg-address').value.trim();
+            if(!name || !phone) return alert("Champs obligatoires manquants.");
+            db.collection("musteriler").doc(phone).set({
+                ad: name, telefon: phone, adres: address, puan: 0, harcanan: 0, kayitTarihi: new Date()
+            }).then(() => { openDashboard(name, phone, 0, 0); }).catch(err => alert("Erreur: " + err.message));
+        }
+
+        function openDashboard(name, phone, puan, harcanan) {
+            document.getElementById('auth-container').style.display = 'none';
+            document.getElementById('qr-container').style.display = 'block';
+            document.getElementById('welcomeMsg').innerText = "Bonjour, " + name.split(' ')[0];
+            updatePointsUI(puan, harcanan);
+            document.getElementById("qrcode").innerHTML = "";
+            new QRCode(document.getElementById("qrcode"), {
+                text: phone, width: 160, height: 160,
+                colorDark : "#000000", colorLight : "#ffffff", correctLevel : QRCode.CorrectLevel.H
+            });
+            db.collection("musteriler").doc(phone).onSnapshot((doc) => {
+                if(doc.exists) updatePointsUI(doc.data().puan, doc.data().harcanan || 0);
+            });
+            localStorage.setItem('nova_user_phone', phone);
+        }
+
+        function updatePointsUI(puan, harcanan) {
+            document.getElementById('puanGoster').innerText = puan;
+            document.getElementById('harcananGoster').innerText = harcanan;
+            let target = 10; 
+            let percentage = (puan / target) * 100;
+            if(percentage > 100) percentage = 100;
+            document.getElementById('progressBar').style.width = percentage + "%";
+            document.getElementById('pointsRatio').innerText = puan + " / " + target;
+            const kalan = target - puan;
+            const msgEl = document.getElementById('motivationMsg');
+            if(puan >= target) {
+                msgEl.innerHTML = "🎉 CADEAU DISPONIBLE ! Demandez-le en caisse.";
+                msgEl.style.color = "#2ecc71"; msgEl.style.fontWeight = "bold";
+            } else {
+                msgEl.innerHTML = `Plus que <b>${kalan} points</b> pour un cadeau !`;
+                msgEl.style.color = "#fff";
+            }
+        }
+
+        function logout() { localStorage.removeItem('nova_user_phone'); location.reload(); }
+        const savedPhone = localStorage.getItem('nova_user_phone');
+        if(savedPhone) { document.getElementById('login-phone').value = savedPhone; login(); }
+    </script>
+</body>
+</html>

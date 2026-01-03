@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+
+<html lang="fr">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <title>Nova Restaurant | Menu Officiel Complet</title>
+
+    <style>
+
+        :root { --gold: #FFD700; --dark: #000; --gray: #1a1a1a; }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+
+        body { background: var(--dark); color: white; padding-bottom: 180px; }
+
+        header { background: var(--dark); border-bottom: 2px solid var(--gold); padding: 15px; text-align: center; position: sticky; top: 0; z-index: 1000; }
+
+        .logo { color: var(--gold); font-size: 1.4rem; font-weight: bold; text-transform: uppercase; letter-spacing: 2px; }
+
+        .container { width: 95%; max-width: 650px; margin: auto; }
+
+        .cat-title { background: var(--gold); color: black; padding: 10px; margin: 25px 0 10px; border-radius: 5px; text-align: center; font-weight: bold; font-size: 0.85rem; text-transform: uppercase; }
+
+        .card { background: var(--gray); border: 1px solid #333; border-radius: 12px; padding: 15px; margin-bottom: 12px; }
+
+        .card h4 { color: #fff; margin-bottom: 12px; font-size: 0.95rem; border-bottom: 1px solid var(--gold); padding-bottom: 5px; }
+
+        .btn-group { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+
+        .btn { background: transparent; border: 1px solid var(--gold); color: var(--gold); padding: 12px 5px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 0.7rem; text-align: center; }
+
+        .btn:active { background: var(--gold); color: black; }
+
+        
+
+        /* Modal */
+
+        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 2000; overflow-y: auto; }
+
+        .modal-content { background: #1a1a1a; width: 90%; max-width: 420px; margin: 30px auto; padding: 20px; border-radius: 15px; border: 1px solid var(--gold); }
+
+        .modal h3 { color: var(--gold); text-align: center; margin-bottom: 15px; }
+
+        label.section-label { display: block; margin: 15px 0 10px; font-size: 0.9rem; color: var(--gold); font-weight: bold; border-bottom: 1px solid #333; padding-bottom: 5px; }
+
+        .option-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+        .opt-item { display: flex; align-items: center; gap: 8px; background: #000; padding: 10px; border-radius: 6px; border: 1px solid #333; font-size: 0.8rem; cursor: pointer; }
+
+        .btn-add { background: var(--gold); color: black; border: none; width: 100%; padding: 15px; border-radius: 10px; font-weight: bold; margin-top: 25px; cursor: pointer; font-size: 1rem; }
+
+        /* Cart Bar */
+
+        .cart-bar { position: fixed; bottom: 0; width: 100%; background: #000; border-top: 2px solid var(--gold); padding: 15px; z-index: 1000; }
+
+        .cart-info { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+
+        .total-price { color: var(--gold); font-size: 1.6rem; font-weight: bold; }
+
+        .btn-wa { background: #25d366; color: white; border: none; width: 100%; padding: 15px; border-radius: 10px; font-weight: bold; font-size: 1.1rem; cursor: pointer; }
+
+    </style>
+
+</head>
+
+<body>
+
+<header><div class="logo">NOVA RESTAURANT</div></header>
+
+<div class="container">
+
+    
+
+    <div class="cat-title">Les Assiettes (Bulgur, Frites, Salade)</div>
+
+    <div class="card">
+
+        <div class="btn-group">
+
+            <button class="btn" onclick="openOp('Assiette Kebab', 13.00, 'plate')">Assiette Kebab 13€</button>
+
+            <button class="btn" onclick="openOp('Assiette Poulet', 14.00, 'plate')">Assiette Poulet 14€</button>
+
+            <button class="btn" onclick="openOp('Assiette Agneau', 15.50, 'plate')">Assiette Agneau 15.50€</button>
+
+            <button class="btn" onclick="openOp('Assiette Steak', 12.00, 'plate')">Assiette Steak 12€</button>
+
+            <button class="btn" onclick="openOp('Assiette Entrecôte', 16.00, 'plate')">Assiette Entrecôte 16€</button>
+
+            <button class="btn" onclick="openOp('Assiette Falafels', 12.00, 'plate')">Assiette Falafels 12€</button>
+
+            <button class="btn" onclick="openOp('Assiette Mixte', 17.50, 'plate')">Assiette Mixte 17.50€</button>
+
+            <button class="btn" onclick="openOp('Salade Grecque', 11.00, 'plate')">Salade Grecque 11€</button>
+
+            <button class="btn" onclick="openOp('Salade Cesar', 12.50, 'plate')">Salade Cesar 12.50€</button>
+
+        </div>
+
+    </div>
+
+    <div class="cat-title">Les Sandwichs (Menu: +Frites & Boisson)</div>
+
+    <div class="card">
+
+        <div class="btn-group">
+
+            <button class="btn" onclick="openOp('Sandwich Kebab Seule', 7.50, 'sandwich')">Kebab Seule 7.50€</button>
+
+            <button class="btn" onclick="openOp('Sandwich Kebab Menu', 10.50, 'sandwich')">Kebab Menu 10.50€</button>
+
+            <button class="btn" onclick="openOp('Galette Kebab Seule', 8.00, 'sandwich')">Galette Seule 8€</button>
+
+            <button class="btn" onclick="openOp('Galette Kebab Menu', 11.00, 'sandwich')">Galette Menu 11€</button>
+
+            <button class="btn" onclick="openOp('Sandwich Poulet Seule', 8.00, 'sandwich')">Poulet Seule 8€</button>
+
+            <button class="btn" onclick="openOp('Sandwich Poulet Menu', 11.00, 'sandwich')">Poulet Menu 11€</button>
+
+            <button class="btn" onclick="openOp('Sandwich Kefta Seule', 8.00, 'sandwich')">Kefta Seule 8€</button>
+
+            <button class="btn" onclick="openOp('Sandwich Kefta Menu', 11.00, 'sandwich')">Kefta Menu 11€</button>
+
+            <button class="btn" onclick="openOp('Sandwich Falafel Seule', 7.50, 'sandwich')">Falafel Seule 7.50€</button>
+
+            <button class="btn" onclick="openOp('Sandwich Falafel Menu', 10.50, 'sandwich')">Falafel Menu 10.50€</button>
+
+            <button class="btn" onclick="openOp('Sandwich Americain Seule', 8.00, 'sandwich')">Americain Seule 8€</button>
+
+            <button class="btn" onclick="openOp('Sandwich Americain Menu', 11.00, 'sandwich')">Americain Menu 11€</button>
+
+            <button class="btn" onclick="openOp('Sandwich Végétarien Seule', 7.00, 'sandwich')">Végétarien Seule 7€</button>
+
+            <button class="btn" onclick="openOp('Sandwich Végétarien Menu', 10.00, 'sandwich')">Végétarien Menu 10€</button>
+
+        </div>
+
+    </div>
+
+    <div class="cat-title">Les Tacos (Menu: +Frites & Boisson)</div>
+
+    <div class="card">
+
+        <h4>Tacos 1 Viande</h4>
+
+        <div class="btn-group">
+
+            <button class="btn" onclick="openOp('Tacos Kebab Seule', 8.00, 'tacos1')">Kebab Seule 8€</button>
+
+            <button class="btn" onclick="openOp('Tacos Kebab Menu', 11.00, 'tacos1')">Kebab Menu 11€</button>
+
+            <button class="btn" onclick="openOp('Tacos Poulet Seule', 8.00, 'tacos1')">Poulet Seule 8€</button>
+
+            <button class="btn" onclick="openOp('Tacos Poulet Menu', 11.00, 'tacos1')">Poulet Menu 11€</button>
+
+            <button class="btn" onclick="openOp('Tacos Tenders Seule', 8.00, 'tacos1')">Tenders Seule 8€</button>
+
+            <button class="btn" onclick="openOp('Tacos Tenders Menu', 11.00, 'tacos1')">Tenders Menu 11€</button>
+
+            <button class="btn" onclick="openOp('Tacos Nuggets Seule', 8.00, 'tacos1')">Nuggets Seule 8€</button>
+
+            <button class="btn" onclick="openOp('Tacos Nuggets Menu', 11.00, 'tacos1')">Nuggets Menu 11€</button>
+
+            <button class="btn" onclick="openOp('Tacos Falafel Seule', 8.00, 'tacos1')">Falafel Seule 8€</button>
+
+            <button class="btn" onclick="openOp('Tacos Falafel Menu', 11.00, 'tacos1')">Falafel Menu 11€</button>
+
+        </div>
+
+        <h4 style="margin-top:15px;">Tacos 2 Viandes</h4>
+
+        <div class="btn-group">
+
+            <button class="btn" onclick="openOp('Tacos 2 Viandes Seule', 9.50, 'tacos2')">2 Viandes Seule 9.50€</button>
+
+            <button class="btn" onclick="openOp('Tacos 2 Viandes Menu', 12.50, 'tacos2')">2 Viandes Menu 12.50€</button>
+
+        </div>
+
+    </div>
+
+    <div class="cat-title">Les Hamburgers (Menu: +Frites & Boisson)</div>
+
+    <div class="card">
+
+        <div class="btn-group">
+
+            <button class="btn" onclick="openOp('Hamburger Seule', 6.50, 'sandwich')">Hamburger Seule 6.50€</button>
+
+            <button class="btn" onclick="openOp('Hamburger Menu', 9.50, 'sandwich')">Hamburger Menu 9.50€</button>
+
+            <button class="btn" onclick="openOp('Hamburger XL Seule', 8.50, 'sandwich')">Hamburger XL Seule 8.50€</button>
+
+            <button class="btn" onclick="openOp('Hamburger XL Menu', 11.50, 'sandwich')">Hamburger XL Menu 11.50€</button>
+
+            <button class="btn" onclick="openOp('Hamburger Nova Seule', 10.00, 'sandwich')">Nova Seule 10€</button>
+
+            <button class="btn" onclick="openOp('Hamburger Nova Menu', 13.00, 'sandwich')">Nova Menu 13€</button>
+
+        </div>
+
+    </div>
+
+    <div class="cat-title">Les Paninis (Menu: +Frites & Boisson)</div>
+
+    <div class="card">
+
+        <div class="btn-group">
+
+            <button class="btn" onclick="openOp('Panini Kebab Seule', 7.00, 'sandwich')">Kebab Seule 7€</button>
+
+            <button class="btn" onclick="openOp('Panini Kebab Menu', 10.00, 'sandwich')">Kebab Menu 10€</button>
+
+            <button class="btn" onclick="openOp('Panini Poulet Seule', 7.00, 'sandwich')">Poulet Seule 7€</button>
+
+            <button class="btn" onclick="openOp('Panini Poulet Menu', 10.00, 'sandwich')">Poulet Menu 10€</button>
+
+            <button class="btn" onclick="openOp('Panini Steak Haché Seule', 7.00, 'sandwich')">Steak Seule 7€</button>
+
+            <button class="btn" onclick="openOp('Panini Steak Haché Menu', 10.00, 'sandwich')">Steak Menu 10€</button>
+
+            <button class="btn" onclick="openOp('Panini Fromage Seule', 6.50, 'sandwich')">Fromage Seule 6.50€</button>
+
+            <button class="btn" onclick="openOp('Panini Fromage Menu', 9.50, 'sandwich')">Fromage Menu 9.50€</button>
+
+        </div>
+
+    </div>
+
+    <div class="cat-title">Les Barquettes</div>
+
+    <div class="card">
+
+        <div class="btn-group">
+
+            <button class="btn" onclick="openOp('Barquette Kebab Petite', 6.00, 'plate')">Kebab Petite 6€</button>
+
+            <button class="btn" onclick="openOp('Barquette Kebab Grande', 10.00, 'plate')">Kebab Grande 10€</button>
+
+            <button class="btn" onclick="openOp('Barquette Nuggets 4pc', 3.50, 'plate')">Nuggets 4pc 3.50€</button>
+
+            <button class="btn" onclick="openOp('Barquette Nuggets 8pc', 6.50, 'plate')">Nuggets 8pc 6.50€</button>
+
+            <button class="btn" onclick="openOp('Barquette Tenders 4pc', 5.00, 'plate')">Tenders 4pc 5€</button>
+
+            <button class="btn" onclick="openOp('Barquette Tenders 8pc', 9.00, 'plate')">Tenders 8pc 9€</button>
+
+            <button class="btn" onclick="openOp('Barquette Falafels 5pc', 5.00, 'plate')">Falafels 5pc 5€</button>
+
+            <button class="btn" onclick="openOp('Barquette Falafels 7pc', 7.00, 'plate')">Falafels 7pc 7€</button>
+
+            <button class="btn" onclick="openOp('Barquette Frites Petite', 2.50, 'plate')">Frites Petite 2.50€</button>
+
+            <button class="btn" onclick="openOp('Barquette Frites Grande', 3.50, 'plate')">Frites Grande 3.50€</button>
+
+        </div>
+
+    </div>
+
+    <div class="cat-title">Les Boissons</div>
+
+    <div class="card">
+
+        <div class="btn-group">
+
+            <button class="btn" onclick="quick('Vin Rouge 75cl', 13.00)">Vin Rouge 13€</button>
+
+            <button class="btn" onclick="quick('Vin Rose 75cl', 13.00)">Vin Rose 13€</button>
+
+            <button class="btn" onclick="quick('Bière 1664 25cl', 2.70)">1664 25cl 2.70€</button>
+
+            <button class="btn" onclick="quick('Bière Heineken 25cl', 2.70)">Heineken 25cl 2.70€</button>
+
+            <button class="btn" onclick="quick('Bière Efes 33cl', 4.00)">Efes 33cl 4€</button>
+
+            <button class="btn" onclick="quick('Bière Desperados 33cl', 4.00)">Desperados 4€</button>
+
+            <button class="btn" onclick="quick('Soft 33cl', 2.00)">Soft 2€</button>
+
+        </div>
+
+    </div>
+
+</div>
+
+<div id="mDialog" class="modal">
+
+    <div class="modal-content">
+
+        <h3 id="mTitle">Options</h3>
+
+        
+
+        <div id="viandeArea" style="display:none;">
+
+            <label class="section-label">Choisissez 2 Viandes :</label>
+
+            <div class="option-grid">
+
+                <label class="opt-item"><input type="checkbox" class="vc" value="Kebab" onchange="limitCheck(this, '.vc', 2)"> Kebab</label>
+
+                <label class="opt-item"><input type="checkbox" class="vc" value="Poulet" onchange="limitCheck(this, '.vc', 2)"> Poulet</label>
+
+                <label class="opt-item"><input type="checkbox" class="vc" value="Tenders" onchange="limitCheck(this, '.vc', 2)"> Tenders</label>
+
+                <label class="opt-item"><input type="checkbox" class="vc" value="Nuggets" onchange="limitCheck(this, '.vc', 2)"> Nuggets</label>
+
+                <label class="opt-item"><input type="checkbox" class="vc" value="Steak" onchange="limitCheck(this, '.vc', 2)"> Steak</label>
+
+            </div>
+
+        </div>
+
+        <label class="section-label">Sauces (Max 2) :</label>
+
+        <div class="option-grid">
+
+            <label class="opt-item"><input type="checkbox" class="sc" value="Blanche" onchange="limitCheck(this, '.sc', 2)"> Blanche</label>
+
+            <label class="opt-item"><input type="checkbox" class="sc" value="Algerienne" onchange="limitCheck(this, '.sc', 2)"> Algerienne</label>
+
+            <label class="opt-item"><input type="checkbox" class="sc" value="Samourai" onchange="limitCheck(this, '.sc', 2)"> Samourai</label>
+
+            <label class="opt-item"><input type="checkbox" class="sc" value="Nova" onchange="limitCheck(this, '.sc', 2)"> Nova</label>
+
+            <label class="opt-item"><input type="checkbox" class="sc" value="Mayo" onchange="limitCheck(this, '.sc', 2)"> Mayo</label>
+
+            <label class="opt-item"><input type="checkbox" class="sc" value="Ketchup" onchange="limitCheck(this, '.sc', 2)"> Ketchup</label>
+
+            <label class="opt-item"><input type="checkbox" class="sc" value="Andalouse" onchange="limitCheck(this, '.sc', 2)"> Andalouse</label>
+
+            <label class="opt-item"><input type="checkbox" class="sc" value="Harissa" onchange="limitCheck(this, '.sc', 2)"> Harissa</label>
+
+        </div>
+
+        <div id="gBox">
+
+            <label class="section-label">Garniture :</label>
+
+            <div id="gChecks" class="option-grid"></div>
+
+        </div>
+
+        <button class="btn-add" onclick="addItem()">AJOUTER AU PANIER</button>
+
+        <button onclick="closeOp()" style="width:100%; background:none; color:#888; border:none; margin-top:15px; font-weight:bold; cursor:pointer;">Annuler</button>
+
+    </div>
+
+</div>
+
+<div class="cart-bar">
+
+    <div class="cart-info"><div class="total-price" id="totVal">0.00€</div><button onclick="sepet=[]; up()" style="background:#ff4444; color:white; border:none; padding:5px 10px; border-radius:5px; font-size:0.7rem; cursor:pointer;">Vider</button></div>
+
+    <button class="btn-wa" onclick="sendWA()">SİPARİŞİ TAMAMLA (WhatsApp)</button>
+
+</div>
+
+<script>
+
+    var sepet = []; var suanki = null;
+
+    function limitCheck(el, cls, max) {
+
+        var checked = document.querySelectorAll(cls + ':checked');
+
+        if (checked.length > max) { el.checked = false; alert("Max " + max + " selections !"); }
+
+    }
+
+    function openOp(n, p, t) {
+
+        suanki = { n: n, p: p, t: t };
+
+        document.getElementById('mTitle').innerText = n;
+
+        document.querySelectorAll('.sc, .vc').forEach(i => i.checked = false);
+
+        document.getElementById('viandeArea').style.display = (t === 'tacos2') ? 'block' : 'none';
+
+        
+
+        var g = document.getElementById('gChecks'); g.innerHTML = '';
+
+        if(t.startsWith('tacos')) {
+
+            g.innerHTML = '<label class="opt-item"><input type="checkbox" class="gc" value="Oignon"> Oignon</label><label class="opt-item"><input type="checkbox" class="gc" value="Tomate"> Tomate</label>';
+
+        } else {
+
+            g.innerHTML = '<label class="opt-item"><input type="checkbox" class="gc" value="Salade" checked> Salade</label><label class="opt-item"><input type="checkbox" class="gc" value="Tomate" checked> Tomate</label><label class="opt-item"><input type="checkbox" class="gc" value="Oignon" checked> Oignon</label>';
+
+        }
+
+        document.getElementById('mDialog').style.display = 'block';
+
+    }
+
+    function closeOp() { document.getElementById('mDialog').style.display = 'none'; }
+
+    function quick(n, p) { sepet.push({ n: n, p: p, s: [], g: [] }); up(); alert(n + " ajouté !"); }
+
+    function addItem() {
+
+        var sauces = []; document.querySelectorAll('.sc:checked').forEach(i => sauces.push(i.value));
+
+        var garns = []; document.querySelectorAll('.gc:checked').forEach(i => garns.push(i.value));
+
+        var viandes = []; document.querySelectorAll('.vc:checked').forEach(i => viandes.push(i.value));
+
+        
+
+        sepet.push({ n: suanki.n, p: suanki.p, s: sauces, g: garns, v: viandes });
+
+        up(); closeOp();
+
+    }
+
+    function up() {
+
+        var total = 0; for (var i = 0; i < sepet.length; i++) { total += sepet[i].p; }
+
+        document.getElementById('totVal').innerText = total.toFixed(2) + "€";
+
+    }
+
+    function sendWA() {
+
+        if (sepet.length === 0) return alert("Panier vide!");
+
+        var m = "Bonjour Nova ! Voici ma commande :%0A";
+
+        for (var i = 0; i < sepet.length; i++) {
+
+            var it = sepet[i]; m += `%0A${i+1}. *${it.n}*`;
+
+            if(it.v && it.v.length > 0) m += `%0A - Viandes: ${it.v.join(', ')}`;
+
+            if(it.s && it.s.length > 0) m += `%0A - Sos: ${it.s.join(', ')}`;
+
+            if(it.g && it.g.length > 0) m += `%0A - Garn: ${it.g.join(', ')}`;
+
+            m += `%0A`;
+
+        }
+
+        m += `%0A*TOTAL: ${document.getElementById('totVal').innerText}*`;
+
+        window.open("https://wa.me/33769428182?text=" + m, "_blank");
+
+    }
+
+</script>
+
+</body>
+
+</html>

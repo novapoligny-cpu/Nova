@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NOVA - Administration</title>
+    
+    <link rel="manifest" href="manifest.json">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#0a0a0a">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="NOVA">
+    <link rel="icon" type="image/png" href="logo.png?v=2">
+    <link rel="apple-touch-icon" href="logo.png?v=2">
+    <link rel="apple-touch-icon" sizes="152x152" href="logo.png?v=2">
+    <link rel="apple-touch-icon" sizes="180x180" href="logo.png?v=2">
+    <link rel="apple-touch-icon" sizes="167x167" href="logo.png?v=2">
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body { 
+            font-family: 'Montserrat', sans-serif; 
+            background: #0a0a0a; 
+            background-image: url('https://www.transparenttextures.com/patterns/black-marble.png');
+            color: #ecf0f1; 
+            margin: 0; padding: 0;
+            -webkit-user-select: none; user-select: none;
+        }
+        
+        #loginScreen { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: #0a0a0a; z-index: 9999; display: flex; flex-direction: column; 
+            justify-content: center; align-items: center; 
+        }
+        #loginScreen input { 
+            padding: 15px; font-size: 20px; text-align: center; 
+            border-radius: 10px; border: 1px solid #D4AF37; 
+            background: #111; color: white; margin-bottom: 15px; width: 200px;
+        }
+        #loginScreen button { 
+            padding: 12px 30px; font-size: 18px; 
+            background: #D4AF37; color: #000; border: none; 
+            border-radius: 10px; cursor: pointer; font-weight: bold; 
+        }
+
+        .container { max-width: 600px; margin: 0 auto; padding: 15px; display: none; }
+        h1 { text-align: center; color: #D4AF37; margin-bottom: 20px; text-transform: uppercase; font-size: 22px; letter-spacing: 2px;}
+        
+        .card { 
+            background: rgba(30, 30, 30, 0.9); border: 1px solid #333;
+            padding: 20px; border-radius: 15px; margin-bottom: 20px; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5); 
+        }
+        .card h2 { margin-top: 0; font-size: 16px; color: #D4AF37; border-bottom: 1px solid #444; padding-bottom: 10px; text-transform: uppercase; }
+
+        .btn-whatsapp {
+            background: #25D366; color: white; width: 100%; padding: 15px;
+            border: none; border-radius: 10px; font-weight: bold; font-size: 16px;
+            cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px;
+            margin-bottom: 20px; box-shadow: 0 4px 10px rgba(37, 211, 102, 0.3);
+        }
+
+        .scanner-container {
+            position: relative; width: 100%; min-height: 300px;
+            background: #000; border-radius: 15px; border: 2px solid #D4AF37;
+            overflow: hidden; display: flex; align-items: center; justify-content: center;
+        }
+        #reader { width: 100%; height: 100%; object-fit: cover; }
+        
+        #startScanBtn {
+            position: absolute; z-index: 10;
+            background: linear-gradient(135deg, #D4AF37, #b7950b);
+            color: #000; border: none; padding: 20px 30px;
+            border-radius: 50px; font-size: 18px; font-weight: 800;
+            cursor: pointer; box-shadow: 0 0 20px rgba(212, 175, 55, 0.6);
+            text-transform: uppercase;
+        }
+        #stopScanBtn {
+            display: none; width: 100%; background: #c0392b; color: white;
+            border: none; padding: 10px; font-weight: bold; margin-top: 10px;
+            border-radius: 8px; cursor: pointer;
+        }
+
+        #customerList { list-style: none; padding: 0; margin: 0; max-height: 400px; overflow-y: auto; }
+        .list-item { 
+            display: flex; justify-content: space-between; align-items: center; 
+            background: #1a1a1a; margin-bottom: 10px; padding: 15px; border-radius: 10px; 
+            border-left: 4px solid #444; transition: 0.2s;
+        }
+        .list-info { flex: 1; cursor: pointer; } 
+        .list-info b { display: block; color: #fff; font-size: 16px; margin-bottom: 3px;}
+        .list-info span { color: #888; font-size: 13px; }
+        .list-address { color: #aaa; font-size: 12px; font-style: italic; display: block; margin-top: 3px;}
+        .add-point-btn {
+            background-color: #27ae60; color: white; border: none;
+            padding: 10px 18px; border-radius: 8px; cursor: pointer;
+            font-weight: bold; font-size: 18px; margin-left: 10px;
+        }
+
+        .modal {
+            display: none; position: fixed; z-index: 1000; left: 0; top: 0;
+            width: 100%; height: 100%; overflow: auto;
+            background-color: rgba(0,0,0,0.9); backdrop-filter: blur(5px);
+            align-items: center; justify-content: center;
+        }
+        .modal-content {
+            background-color: #1a1a1a; border: 2px solid #D4AF37;
+            padding: 25px; border-radius: 15px; width: 85%; max-width: 400px;
+            text-align: center; color: white;
+            box-shadow: 0 0 30px rgba(212, 175, 55, 0.2);
+            max-height: 80vh; overflow-y: auto;
+        }
+        .modal input, .modal textarea {
+            width: 100%; padding: 12px; margin: 8px 0;
+            background: #333; border: 1px solid #555; color: white;
+            border-radius: 5px; box-sizing: border-box; font-family: inherit;
+        }
+        
+        .btn-gold { background: #D4AF37; color: black; padding: 12px; width: 100%; border:none; border-radius:8px; font-weight:bold; cursor:pointer; margin-top:10px; }
+        .btn-red { background: #c0392b; color: white; padding: 12px; width: 100%; border:none; border-radius:8px; font-weight:bold; cursor:pointer; margin-top:10px; }
+        .btn-grey { background: #7f8c8d; color: white; padding: 12px; width: 100%; border:none; border-radius:8px; font-weight:bold; cursor:pointer; margin-top:10px; }
+        .reward-btn { background: linear-gradient(45deg, #D4AF37, #f39c12); color: #000; border: none; padding: 15px; width: 100%; border-radius: 10px; font-size: 18px; font-weight: bold; margin-top: 15px; cursor: pointer; animation: pulse 1.5s infinite; }
+        
+        .wa-list-item {
+            display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 1px solid #333; padding: 10px 0;
+        }
+        .btn-send-wa { background: #25D366; color: white; text-decoration: none; padding: 5px 12px; border-radius: 5px; font-size: 12px; font-weight: bold; }
+        @keyframes pulse { 0% {transform: scale(1);} 50% {transform: scale(1.02);} 100% {transform: scale(1);} }
+    </style>
+</head>
+<body>
+
+    <div id="loginScreen">
+        <h2>NOVA ADMIN</h2>
+        <input type="password" id="passInput" placeholder="Mot de passe">
+        <button onclick="checkPass()">Connexion</button>
+    </div>
+
+    <div class="container" id="mainPanel">
+        <h1>Panneau de Contrôle</h1>
+
+        <button class="btn-whatsapp" onclick="openWhatsAppModal()">📢 CAMPAGNE WHATSAPP</button>
+
+        <div class="card">
+            <h2 style="font-size: 18px; text-align: center;">📷 SCANNER QR</h2>
+            <div class="scanner-container">
+                <div id="reader"></div>
+                <button id="startScanBtn" onclick="startCamera()">📷 SCANNER UN CLIENT</button>
+            </div>
+            <button id="stopScanBtn" onclick="stopCamera()">Arrêter la caméra</button>
+        </div>
+
+        <div class="card">
+            <h2>👥 Clients</h2>
+            <input type="text" id="searchBox" placeholder="Rechercher nom..." 
+                   style="width:100%; padding:12px; margin-bottom:15px; border-radius:8px; border:none; background:#222; color:white;"
+                   onkeyup="filterList()">
+            <ul id="customerList"></ul>
+        </div>
+        
+        <div class="card">
+             <h2>⌨️ Ajout Manuel</h2>
+             <div style="display:flex; gap:10px;">
+                 <input type="tel" id="manualPhone" placeholder="06..." style="flex:1; padding:10px; border-radius:5px; border:none;">
+                 <button onclick="manualAdd()" style="background:#D4AF37; border:none; padding:10px; border-radius:5px; font-weight:bold;">OK</button>
+             </div>
+        </div>
+    </div>
+
+    <div id="waModal" class="modal">
+        <div class="modal-content">
+            <h2 style="color:#25D366;">Campagne WhatsApp</h2>
+            <p style="font-size:12px; color:#aaa;">Écrivez votre message, puis cliquez sur "Envoyer" à côté de chaque client.</p>
+            <textarea id="waMessage" rows="4" placeholder="Bonjour! Profitez de -10% ce weekend chez NOVA..." onkeyup="renderWaList()"></textarea>
+            <button class="btn-grey" onclick="copyAllNumbers()" style="margin-bottom:15px; background:#444;">📋 Copier tous les numéros</button>
+            <div id="waCustomerList" style="text-align:left; max-height:200px; overflow-y:auto; border-top:1px solid #333;"></div>
+            <button class="btn-grey" onclick="closeModal('waModal')">Fermer</button>
+        </div>
+    </div>
+
+    <div id="statusModal" class="modal">
+        <div class="modal-content">
+            <h2 id="statusTitle" style="color:#000; font-size:22px; margin-bottom:10px;">Traitement...</h2>
+            <div id="statusMsg" style="font-size:16px; margin-bottom:20px;"></div>
+            <div id="actionButtons"></div>
+            <button class="btn-grey" onclick="closeModal('statusModal')">Fermer</button>
+        </div>
+    </div>
+
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <h2 style="color:#D4AF37; margin-bottom:15px;">Modifier le Client</h2>
+            <input type="text" id="editPhone" disabled style="background:#222; color:#555;">
+            <input type="text" id="editName" placeholder="Nom">
+            <textarea id="editAddress" rows="3" placeholder="Adresse"></textarea>
+            <button class="btn-gold" onclick="saveEdit()">💾 Enregistrer</button>
+            <button class="btn-red" onclick="deleteCustomer()">🗑️ Supprimer</button>
+            <button class="btn-grey" onclick="closeModal('editModal')">Annuler</button>
+        </div>
+    </div>
+
+    <script>
+        // --- ⚠️ API KODLARINI BURAYA YAPIŞTIRIN ⚠️ ---
+        const firebaseConfig = {
+            apiKey: "AIzaSyDxizNLOTlYYm7CUSRLDrMRe7Q1pn2l1D4",
+            authDomain: "fidelite2-d521c.firebaseapp.com",
+            projectId: "fidelite2-d521c",
+            storageBucket: "fidelite2-d521c.firebasestorage.app",
+            messagingSenderId: "787733255176",
+            appId: "1:787733255176:web:df3a493d405f4b67b92dbd"
+        };
+        // ----------------------------------------------
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        let allCustomers = [];
+        let currentEditPhone = null;
+        let html5QrCode;
+
+        function checkPass() {
+            if(document.getElementById('passInput').value === "1234") {
+                document.getElementById('loginScreen').style.display = 'none';
+                document.getElementById('mainPanel').style.display = 'block';
+                listeyiDinle();
+            } else { alert("Mot de passe incorrect !"); }
+        }
+
+        function openWhatsAppModal() { document.getElementById('waModal').style.display = 'flex'; renderWaList(); }
+        function renderWaList() {
+            const listDiv = document.getElementById('waCustomerList');
+            const message = document.getElementById('waMessage').value;
+            const encodedMsg = encodeURIComponent(message);
+            listDiv.innerHTML = "";
+            if(allCustomers.length === 0) { listDiv.innerHTML = "<p style='color:#666; text-align:center'>Aucun client.</p>"; return; }
+            allCustomers.forEach(cust => {
+                let cleanPhone = cust.telefon.replace(/\s/g, '').replace(/-/g, '');
+                if(cleanPhone.startsWith('0')) { cleanPhone = '33' + cleanPhone.substring(1); }
+                const waLink = `https://wa.me/${cleanPhone}?text=${encodedMsg}`;
+                const item = `<div class="wa-list-item"><span style="font-size:14px; color:#ddd;">${cust.ad}</span><a href="${waLink}" target="_blank" class="btn-send-wa">Envoyer ➤</a></div>`;
+                listDiv.innerHTML += item;
+            });
+        }
+        function copyAllNumbers() {
+            let phones = []; allCustomers.forEach(c => phones.push(c.telefon));
+            navigator.clipboard.writeText(phones.join(', ')).then(() => { alert("Numéros copiés !"); });
+        }
+
+        function startCamera() {
+            const startBtn = document.getElementById('startScanBtn');
+            const stopBtn = document.getElementById('stopScanBtn');
+            if(!html5QrCode) html5QrCode = new Html5Qrcode("reader");
+            startBtn.innerText = "Démarrage...";
+            const config = { fps: 10, qrbox: { width: 250, height: 250 } };
+            html5QrCode.start({ facingMode: "environment" }, config, (decodedText) => {
+                stopCamera(); islemYap(decodedText);
+            }).then(() => { startBtn.style.display = "none"; stopBtn.style.display = "block"; })
+            .catch(err => { alert("Erreur: " + err); startBtn.innerText = "📷 SCANNER UN CLIENT"; });
+        }
+        function stopCamera() {
+            if(html5QrCode) {
+                html5QrCode.stop().then(() => {
+                    document.getElementById('startScanBtn').style.display = "flex";
+                    document.getElementById('startScanBtn').innerText = "📷 SCANNER UN CLIENT";
+                    document.getElementById('stopScanBtn').style.display = "none";
+                });
+            }
+        }
+
+        function manualAdd() {
+            const phone = document.getElementById('manualPhone').value;
+            if(phone.length > 3) { islemYap(phone); document.getElementById('manualPhone').value = ""; }
+        }
+
+        function islemYap(phone) {
+            const modal = document.getElementById('statusModal');
+            const title = document.getElementById('statusTitle');
+            const msg = document.getElementById('statusMsg');
+            const btns = document.getElementById('actionButtons');
+            modal.style.display = 'flex'; title.innerText = "Traitement..."; msg.innerHTML = ""; btns.innerHTML = "";
+            const docRef = db.collection("musteriler").doc(phone);
+            docRef.get().then((doc) => {
+                if (doc.exists) {
+                    docRef.update({ puan: firebase.firestore.FieldValue.increment(1) }).then(() => {
+                        const data = doc.data(); const yeniPuan = data.puan + 1;
+                        title.innerText = "✅ Point Ajouté"; title.style.color = "#27ae60";
+                        msg.innerHTML = `<b>${data.ad}</b><br>Total: <b style="color:#D4AF37; font-size:24px;">${yeniPuan}</b>`;
+                        if (yeniPuan >= 10) {
+                            btns.innerHTML = `<div style="color:#f39c12; font-weight:bold; margin-bottom:10px;">🎉 RÉCOMPENSE !</div><button class="reward-btn" onclick="oduluVer('${phone}')">🎁 OFFRIR CADEAU</button>`;
+                        }
+                    });
+                } else { title.innerText = "❌ Erreur"; title.style.color = "#c0392b"; msg.innerHTML = "Client introuvable."; }
+            });
+        }
+
+        window.oduluVer = function(phone) {
+            if(confirm("Confirmer la récompense ?")) {
+                db.collection("musteriler").doc(phone).update({
+                    puan: firebase.firestore.FieldValue.increment(-10), harcanan: firebase.firestore.FieldValue.increment(10)
+                }).then(() => { alert("Cadeau offert !"); closeModal('statusModal'); });
+            }
+        }
+
+        function listeyiDinle() {
+            db.collection("musteriler").orderBy("kayitTarihi", "desc").onSnapshot((snapshot) => {
+                allCustomers = []; snapshot.forEach((doc) => { allCustomers.push(doc.data()); });
+                renderList(allCustomers);
+                if(document.getElementById('waModal').style.display === 'flex') { renderWaList(); }
+            });
+        }
+        function renderList(data) {
+            const listEl = document.getElementById('customerList'); listEl.innerHTML = "";
+            data.forEach(cust => {
+                const isReady = cust.puan >= 10; const activeClass = isReady ? "border-left: 4px solid #D4AF37;" : "";
+                const li = `<li class="list-item" style="${activeClass}">
+                        <div class="list-info" onclick="openEditModal('${cust.telefon}', '${cust.ad}', '${cust.adres || ''}')">
+                            <b>${cust.ad} <span style="font-size:12px; color:#888;">(✎)</span></b>
+                            <span>${cust.telefon}</span><span class="list-address">${cust.adres || '-'}</span>
+                        </div>
+                        <div style="display:flex; align-items:center;">
+                            <span style="color:#D4AF37; font-weight:bold; margin-right:10px;">${cust.puan} ★</span>
+                            <button class="add-point-btn" onclick="islemYap('${cust.telefon}')">+</button>
+                        </div></li>`;
+                listEl.innerHTML += li;
+            });
+        }
+
+        window.openEditModal = function(phone, name, address) {
+            currentEditPhone = phone;
+            document.getElementById('editPhone').value = phone;
+            document.getElementById('editName').value = name;
+            document.getElementById('editAddress').value = address;
+            document.getElementById('editModal').style.display = 'flex';
+        }
+        window.saveEdit = function() {
+            const newName = document.getElementById('editName').value;
+            const newAddress = document.getElementById('editAddress').value;
+            db.collection("musteriler").doc(currentEditPhone).update({ ad: newName, adres: newAddress })
+            .then(() => { alert("Enregistré !"); closeModal('editModal'); });
+        }
+        window.deleteCustomer = function() {
+            if(confirm("Supprimer ce client ?")) {
+                db.collection("musteriler").doc(currentEditPhone).delete()
+                .then(() => { alert("Client supprimé."); closeModal('editModal'); });
+            }
+        }
+        function closeModal(modalId) { document.getElementById(modalId).style.display = 'none'; }
+        function filterList() {
+            const term = document.getElementById('searchBox').value.toLowerCase();
+            const filtered = allCustomers.filter(c => c.ad.toLowerCase().includes(term));
+            renderList(filtered);
+        }
+    </script>
+</body>
+</html>
