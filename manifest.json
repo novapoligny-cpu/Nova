@@ -3,7 +3,7 @@
   "short_name": "NOVA",
   "start_url": "client.html",
   "display": "standalone",
-  "background_color": "#0a0a0a",
+  "background_color": "#000000",
   "theme_color": "#D4AF37",
   "orientation": "portrait",
   "icons": [
