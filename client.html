@@ -10,8 +10,8 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link rel="icon" type="image/png" href="logo.png?v=9">
-    <link rel="apple-touch-icon" href="logo.png?v=9">
+    <link rel="icon" type="image/png" href="logo.png?v=10">
+    <link rel="apple-touch-icon" href="logo.png?v=10">
     
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
@@ -49,11 +49,11 @@
             border-radius: 10px; cursor: pointer; width: 100%; font-size: 16px; font-weight: 800; margin-top: 15px; text-transform: uppercase;
         }
 
-        /* SİPARİŞ TAKİP KUTUSU (YENİ) */
+        /* SİPARİŞ TAKİP KUTUSU */
         .order-status-box {
             background: #222; border: 2px solid var(--gold); border-radius: 15px;
             padding: 15px; margin-bottom: 20px; text-align: left;
-            animation: pulse 2s infinite; display: none; /* Başlangıçta gizli */
+            animation: pulse 2s infinite; display: none;
         }
         @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(212, 175, 55, 0); } 100% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0); } }
         
@@ -61,17 +61,18 @@
         .status-text { font-size: 18px; color: var(--gold); font-weight: bold; margin-top: 5px; }
         .status-time { font-size: 12px; color: #fff; margin-top: 5px; }
 
-        /* MENÜ VE SEPET */
-        .cat-title { background: var(--gold); color: black; padding: 12px; margin: 20px 0 10px; border-radius: 8px; text-align: center; font-weight: 800; text-transform: uppercase; letter-spacing: 1px;}
+        /* MENÜ STİLLERİ */
+        .cat-title { background: var(--gold); color: black; padding: 12px; margin: 25px 0 10px; border-radius: 8px; text-align: center; font-weight: 800; text-transform: uppercase; letter-spacing: 1px;}
         .menu-card { background: #1a1a1a; border: 1px solid #333; border-radius: 12px; padding: 15px; margin-bottom: 12px; text-align: left; }
         .menu-card h4 { color: #fff; margin: 0 0 10px 0; font-size: 1rem; border-bottom: 1px solid #333; padding-bottom: 5px; }
         .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
         .menu-item-btn { 
             background: transparent; border: 1px solid #444; color: #fff; 
             padding: 12px 5px; border-radius: 6px; cursor: pointer; font-size: 0.8rem; text-align: center;
+            display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 50px;
         }
         .menu-item-btn:active { background: var(--gold); color: black; border-color: var(--gold); }
-        .price-tag { display: block; font-weight: bold; color: var(--gold); margin-top: 3px; }
+        .price-tag { display: block; font-weight: bold; color: var(--gold); margin-top: 3px; font-size: 0.9em;}
 
         /* NAVİGASYON */
         .nav-bar {
@@ -91,6 +92,7 @@
             box-shadow: 0 -5px 20px rgba(0,0,0,0.8);
         }
         .cart-flex { display: flex; justify-content: space-between; align-items: center; }
+        .total-price { color: var(--gold); font-size: 1.2rem; font-weight: bold; }
         .btn-wa { background: #25d366; color: white; border: none; padding: 10px 20px; border-radius: 20px; font-weight: bold; font-size: 0.9rem; cursor: pointer; display: flex; align-items: center; gap: 8px; }
 
         /* MODAL */
@@ -98,7 +100,6 @@
         .modal-content { background: #1a1a1a; width: 90%; max-width: 400px; margin: auto; padding: 20px; border-radius: 15px; border: 1px solid var(--gold); margin-top: 50px; margin-bottom: 50px;}
         .opt-item { display: flex; align-items: center; gap: 8px; background: #000; padding: 10px; border-radius: 6px; border: 1px solid #333; font-size: 0.8rem; cursor: pointer; color: #fff; margin-bottom:5px;}
         
-        /* QR ALANI */
         #qrcode { display: flex; justify-content: center; margin: 20px 0; padding: 10px; background: white; border-radius: 10px; }
         #qrcode img { display: block; margin: auto; }
     </style>
@@ -147,7 +148,7 @@
     <div id="tab-menu" class="container hidden">
         
         <div id="orderStatusBox" class="order-status-box">
-            <div class="status-title"><i class="fa-solid fa-spinner fa-spin"></i> Statut de la commande</div>
+            <div class="status-title"><i class="fa-solid fa-spinner fa-spin"></i> Statut</div>
             <div class="status-text" id="statusText">En attente...</div>
             <div class="status-time" id="statusTime"></div>
         </div>
@@ -156,20 +157,145 @@
 
         <div class="cat-title">Les Assiettes</div>
         <div class="menu-card">
-            <h4>Avec Bulgur, Frites, Salade</h4>
+            <h4>Bulgur, Frites, Salade</h4>
             <div class="menu-grid">
                 <button class="menu-item-btn" onclick="openOp('Assiette Kebab', 13.00, 'plate')">Kebab<span class="price-tag">13€</span></button>
                 <button class="menu-item-btn" onclick="openOp('Assiette Poulet', 14.00, 'plate')">Poulet<span class="price-tag">14€</span></button>
+                <button class="menu-item-btn" onclick="openOp('Assiette Agneau', 15.50, 'plate')">Agneau<span class="price-tag">15.50€</span></button>
+                <button class="menu-item-btn" onclick="openOp('Assiette Steak', 12.00, 'plate')">Steak<span class="price-tag">12€</span></button>
+                <button class="menu-item-btn" onclick="openOp('Assiette Entrecôte', 16.00, 'plate')">Entrecôte<span class="price-tag">16€</span></button>
+                <button class="menu-item-btn" onclick="openOp('Assiette Falafels', 12.00, 'plate')">Falafels<span class="price-tag">12€</span></button>
                 <button class="menu-item-btn" onclick="openOp('Assiette Mixte', 17.50, 'plate')">Mixte<span class="price-tag">17.50€</span></button>
-                </div>
+                <button class="menu-item-btn" onclick="openOp('Salade Grecque', 11.00, 'plate')">Salade Grecque<span class="price-tag">11€</span></button>
+                <button class="menu-item-btn" onclick="openOp('Salade Cesar', 12.50, 'plate')">Salade Cesar<span class="price-tag">12.50€</span></button>
+            </div>
+        </div>
+
+        <div class="cat-title">Les Sandwichs</div>
+        <div class="menu-card">
+            <h4>Seul ou Menu (+Frites/Boisson)</h4>
+            <div class="menu-grid">
+                <button class="menu-item-btn" onclick="openOp('Sandwich Kebab Seule', 7.50, 'sandwich')">Kebab Seul<span class="price-tag">7.50€</span></button>
+                <button class="menu-item-btn" onclick="openOp('Sandwich Kebab Menu', 10.50, 'sandwich')">Kebab Menu<span class="price-tag">10.50€</span></button>
+                
+                <button class="menu-item-btn" onclick="openOp('Galette Kebab Seule', 8.00, 'sandwich')">Galette Seul<span class="price-tag">8€</span></button>
+                <button class="menu-item-btn" onclick="openOp('Galette Kebab Menu', 11.00, 'sandwich')">Galette Menu<span class="price-tag">11€</span></button>
+                
+                <button class="menu-item-btn" onclick="openOp('Sandwich Poulet Seule', 8.00, 'sandwich')">Poulet Seul<span class="price-tag">8€</span></button>
+                <button class="menu-item-btn" onclick="openOp('Sandwich Poulet Menu', 11.00, 'sandwich')">Poulet Menu<span class="price-tag">11€</span></button>
+                
+                <button class="menu-item-btn" onclick="openOp('Sandwich Kefta Seule', 8.00, 'sandwich')">Kefta Seul<span class="price-tag">8€</span></button>
+                <button class="menu-item-btn" onclick="openOp('Sandwich Kefta Menu', 11.00, 'sandwich')">Kefta Menu<span class="price-tag">11€</span></button>
+                
+                <button class="menu-item-btn" onclick="openOp('Sandwich Falafel Seule', 7.50, 'sandwich')">Falafel Seul<span class="price-tag">7.50€</span></button>
+                <button class="menu-item-btn" onclick="openOp('Sandwich Falafel Menu', 10.50, 'sandwich')">Falafel Menu<span class="price-tag">10.50€</span></button>
+                
+                <button class="menu-item-btn" onclick="openOp('Sandwich Americain Seule', 8.00, 'sandwich')">Americain Seul<span class="price-tag">8€</span></button>
+                <button class="menu-item-btn" onclick="openOp('Sandwich Americain Menu', 11.00, 'sandwich')">Americain Menu<span class="price-tag">11€</span></button>
+                
+                <button class="menu-item-btn" onclick="openOp('Sandwich Végétarien Seule', 7.00, 'sandwich')">Végétarien Seul<span class="price-tag">7€</span></button>
+                <button class="menu-item-btn" onclick="openOp('Sandwich Végétarien Menu', 10.00, 'sandwich')">Végétarien Menu<span class="price-tag">10€</span></button>
+            </div>
         </div>
 
         <div class="cat-title">Les Tacos</div>
         <div class="menu-card">
             <h4>Sauce Fromagère Incluse</h4>
+            
+            <h5 style="color:var(--gold); border-bottom:1px solid #333;">Tacos 1 Viande (Choix dans la liste)</h5>
             <div class="menu-grid">
-                <button class="menu-item-btn" onclick="openOp('Tacos 1 Viande', 8.00, 'tacos1')">1 Viande<span class="price-tag">8€</span></button>
-                <button class="menu-item-btn" onclick="openOp('Tacos 2 Viandes', 9.50, 'tacos2')">2 Viandes<span class="price-tag">9.50€</span></button>
+                <button class="menu-item-btn" onclick="openOp('Tacos Kebab Seul', 8.00, 'tacos1')">Kebab Seul<span class="price-tag">8€</span></button>
+                <button class="menu-item-btn" onclick="openOp('Tacos Kebab Menu', 11.00, 'tacos1')">Kebab Menu<span class="price-tag">11€</span></button>
+                
+                <button class="menu-item-btn" onclick="openOp('Tacos Poulet Seul', 8.00, 'tacos1')">Poulet Seul<span class="price-tag">8€</span></button>
+                <button class="menu-item-btn" onclick="openOp('Tacos Poulet Menu', 11.00, 'tacos1')">Poulet Menu<span class="price-tag">11€</span></button>
+
+                <button class="menu-item-btn" onclick="openOp('Tacos Steak Seul', 8.00, 'tacos1')">Poulet Seul<span class="price-tag">8€</span></button>
+                <button class="menu-item-btn" onclick="openOp('Tacos Steak Menu', 11.00, 'tacos1')">Poulet Menu<span class="price-tag">11€</span></button>
+                
+                <button class="menu-item-btn" onclick="openOp('Tacos Tenders Seul', 8.00, 'tacos1')">Tenders Seul<span class="price-tag">8€</span></button>
+                <button class="menu-item-btn" onclick="openOp('Tacos Tenders Menu', 11.00, 'tacos1')">Tenders Menu<span class="price-tag">11€</span></button>
+                
+                <button class="menu-item-btn" onclick="openOp('Tacos Nuggets Seul', 8.00, 'tacos1')">Nuggets Seul<span class="price-tag">8€</span></button>
+                <button class="menu-item-btn" onclick="openOp('Tacos Nuggets Menu', 11.00, 'tacos1')">Nuggets Menu<span class="price-tag">11€</span></button>
+                
+                <button class="menu-item-btn" onclick="openOp('Tacos Falafel Seul', 8.00, 'tacos1')">Falafel Seul<span class="price-tag">8€</span></button>
+                <button class="menu-item-btn" onclick="openOp('Tacos Falafel Menu', 11.00, 'tacos1')">Falafel Menu<span class="price-tag">11€</span></button>
+            </div>
+
+            <h5 style="color:var(--gold); border-bottom:1px solid #333; margin-top:20px;">Tacos 2 Viandes</h5>
+            <div class="menu-grid">
+                <button class="menu-item-btn" onclick="openOp('Tacos 2 Viandes Seule', 9.50, 'tacos2')">2 Viandes Seul<span class="price-tag">9.50€</span></button>
+                <button class="menu-item-btn" onclick="openOp('Tacos 2 Viandes Menu', 12.50, 'tacos2')">2 Viandes Menu<span class="price-tag">12.50€</span></button>
+            </div>
+        </div>
+
+        <div class="cat-title">Les Hamburgers</div>
+        <div class="menu-card">
+            <div class="menu-grid">
+                <button class="menu-item-btn" onclick="openOp('Hamburger Seule', 6.50, 'sandwich')">Hamburger Seul<span class="price-tag">6.50€</span></button>
+                <button class="menu-item-btn" onclick="openOp('Hamburger Menu', 9.50, 'sandwich')">Hamburger Menu<span class="price-tag">9.50€</span></button>
+                
+                <button class="menu-item-btn" onclick="openOp('Hamburger XL Seule', 8.50, 'sandwich')">Hamburger XL Seul<span class="price-tag">8.50€</span></button>
+                <button class="menu-item-btn" onclick="openOp('Hamburger XL Menu', 11.50, 'sandwich')">Hamburger XL Menu<span class="price-tag">11.50€</span></button>
+                
+                <button class="menu-item-btn" onclick="openOp('Hamburger Nova Seule', 10.00, 'sandwich')">Nova Seul<span class="price-tag">10€</span></button>
+                <button class="menu-item-btn" onclick="openOp('Hamburger Nova Menu', 13.00, 'sandwich')">Nova Menu<span class="price-tag">13€</span></button>
+            </div>
+        </div>
+
+        <div class="cat-title">Les Paninis</div>
+        <div class="menu-card">
+            <div class="menu-grid">
+                <button class="menu-item-btn" onclick="openOp('Panini Kebab Seule', 7.00, 'sandwich')">Panini Kebab Seul<span class="price-tag">7€</span></button>
+                <button class="menu-item-btn" onclick="openOp('Panini Kebab Menu', 10.00, 'sandwich')">Panini Kebab Menu<span class="price-tag">10€</span></button>
+                
+                <button class="menu-item-btn" onclick="openOp('Panini Poulet Seule', 7.00, 'sandwich')">Panini Poulet Seul<span class="price-tag">7€</span></button>
+                <button class="menu-item-btn" onclick="openOp('Panini Poulet Menu', 10.00, 'sandwich')">Panini Poulet Menu<span class="price-tag">10€</span></button>
+                
+                <button class="menu-item-btn" onclick="openOp('Panini Steak Seule', 7.00, 'sandwich')">Panini Steak Seul<span class="price-tag">7€</span></button>
+                <button class="menu-item-btn" onclick="openOp('Panini Steak Menu', 10.00, 'sandwich')">Panini Steak Menu<span class="price-tag">10€</span></button>
+                
+                <button class="menu-item-btn" onclick="openOp('Panini Fromage Seule', 6.50, 'sandwich')">Panini Fromage Seul<span class="price-tag">6.50€</span></button>
+                <button class="menu-item-btn" onclick="openOp('Panini Fromage Menu', 9.50, 'sandwich')">Panini Fromage Menu<span class="price-tag">9.50€</span></button>
+            </div>
+        </div>
+
+        <div class="cat-title">Les Barquettes</div>
+        <div class="menu-card">
+            <div class="menu-grid">
+                <button class="menu-item-btn" onclick="quick('Barquette Kebab Petite', 6.00)">Kebab Petite<span class="price-tag">6€</span></button>
+                <button class="menu-item-btn" onclick="quick('Barquette Kebab Grande', 10.00)">Kebab Grande<span class="price-tag">10€</span></button>
+                
+                <button class="menu-item-btn" onclick="quick('Nuggets 4pc', 3.50)">Nuggets 4pc<span class="price-tag">3.50€</span></button>
+                <button class="menu-item-btn" onclick="quick('Nuggets 8pc', 6.50)">Nuggets 8pc<span class="price-tag">6.50€</span></button>
+                
+                <button class="menu-item-btn" onclick="quick('Tenders 4pc', 5.00)">Tenders 4pc<span class="price-tag">5€</span></button>
+                <button class="menu-item-btn" onclick="quick('Tenders 8pc', 9.00)">Tenders 8pc<span class="price-tag">9€</span></button>
+                
+                <button class="menu-item-btn" onclick="quick('Falafels 5pc', 5.00)">Falafels 5pc<span class="price-tag">5€</span></button>
+                <button class="menu-item-btn" onclick="quick('Falafels 7pc', 7.00)">Falafels 7pc<span class="price-tag">7€</span></button>
+                
+                <button class="menu-item-btn" onclick="quick('Frites Petite', 2.50)">Frites Petite<span class="price-tag">2.50€</span></button>
+                <button class="menu-item-btn" onclick="quick('Frites Grande', 3.50)">Frites Grande<span class="price-tag">3.50€</span></button>
+            </div>
+        </div>
+
+        <div class="cat-title">Boissons</div>
+        <div class="menu-card">
+            <div class="menu-grid">
+                <button class="menu-item-btn" onclick="quick('Soft 33cl', 2.00)">Soft 33cl<span class="price-tag">2€</span></button>
+                <button class="menu-item-btn" onclick="quick('Ayran', 1.50)">Ayran<span class="price-tag">1.50€</span></button>
+                <button class="menu-item-btn" onclick="quick('Bouteille Eau 50cl', 1.50)">Eau 50cl<span class="price-tag">1.50€</span></button>
+                <button class="menu-item-btn" onclick="quick('Redbull', 3.00)">Redbull<span class="price-tag">3€</span></button>
+                
+                <button class="menu-item-btn" onclick="quick('Bière 1664 25cl', 2.70)">1664 25cl<span class="price-tag">2.70€</span></button>
+                <button class="menu-item-btn" onclick="quick('Bière Heineken 25cl', 2.70)">Heineken 25cl<span class="price-tag">2.70€</span></button>
+                <button class="menu-item-btn" onclick="quick('Bière Efes 33cl', 4.00)">Efes 33cl<span class="price-tag">4€</span></button>
+                <button class="menu-item-btn" onclick="quick('Bière Desperados 33cl', 4.00)">Desperados 33cl<span class="price-tag">4€</span></button>
+                
+                <button class="menu-item-btn" onclick="quick('Vin Rouge 75cl', 13.00)">Vin Rouge 75cl<span class="price-tag">13€</span></button>
+                <button class="menu-item-btn" onclick="quick('Vin Rose 75cl', 13.00)">Vin Rose 75cl<span class="price-tag">13€</span></button>
             </div>
         </div>
 
@@ -197,14 +323,20 @@
     <div id="mDialog" class="modal">
         <div class="modal-content">
             <h3 id="mTitle" style="color:var(--gold); margin-bottom:15px;">Options</h3>
+            
             <div id="viandeArea" style="display:none; text-align:left;">
                 <label style="color:var(--gold); font-weight:bold;">Viandes :</label>
                 <div style="display:grid; grid-template-columns:1fr 1fr; gap:5px; margin-top:5px;">
                     <label class="opt-item"><input type="checkbox" class="vc" value="Kebab"> Kebab</label>
                     <label class="opt-item"><input type="checkbox" class="vc" value="Poulet"> Poulet</label>
                     <label class="opt-item"><input type="checkbox" class="vc" value="Tenders"> Tenders</label>
+                    <label class="opt-item"><input type="checkbox" class="vc" value="Kefta"> Kefta</label>
+                    <label class="opt-item"><input type="checkbox" class="vc" value="Nuggets"> Nuggets</label>
+                    <label class="opt-item"><input type="checkbox" class="vc" value="Falafel"> Falafel</label>
+                    <label class="opt-item"><input type="checkbox" class="vc" value="Steak"> Steak</label>
                 </div>
             </div>
+
             <div style="text-align:left; margin-top:15px;">
                 <label style="color:var(--gold); font-weight:bold;">Sauces (Max 2) :</label>
                 <div style="display:grid; grid-template-columns:1fr 1fr; gap:5px; margin-top:5px;">
@@ -212,8 +344,14 @@
                     <label class="opt-item"><input type="checkbox" class="sc" value="Algerienne"> Algerienne</label>
                     <label class="opt-item"><input type="checkbox" class="sc" value="Samourai"> Samourai</label>
                     <label class="opt-item"><input type="checkbox" class="sc" value="Biggy"> Biggy</label>
+                    <label class="opt-item"><input type="checkbox" class="sc" value="Mayo"> Mayo</label>
+                    <label class="opt-item"><input type="checkbox" class="sc" value="Ketchup"> Ketchup</label>
+                    <label class="opt-item"><input type="checkbox" class="sc" value="Harissa"> Harissa</label>
+                    <label class="opt-item"><input type="checkbox" class="sc" value="Andalouse"> Andalouse</label>
+                    <label class="opt-item"><input type="checkbox" class="sc" value="Nova"> Nova</label>
                 </div>
             </div>
+
             <button class="main-btn" onclick="addItem()">AJOUTER</button>
             <button onclick="closeOp()" style="width:100%; background:none; color:#888; border:none; margin-top:15px;">Annuler</button>
         </div>
@@ -234,27 +372,20 @@
 
         // --- TAKİP SİSTEMİ ---
         function listenOrder(phone) {
-            // Sadece 'Tamamlandı' (Terminé) OLMAYAN siparişleri dinle
             db.collection("siparisler").doc(phone).onSnapshot((doc) => {
                 const box = document.getElementById('orderStatusBox');
                 if(doc.exists && doc.data().durum !== 'Terminé') {
                     box.style.display = 'block';
                     const durum = doc.data().durum;
                     document.getElementById('statusText').innerText = durum;
-                    
-                    if(doc.data().teslimSaati) {
-                        document.getElementById('statusTime').innerText = "Heure prévue : " + doc.data().teslimSaati;
-                    } else {
-                        document.getElementById('statusTime').innerText = "";
-                    }
+                    if(doc.data().teslimSaati) document.getElementById('statusTime').innerText = "Heure prévue : " + doc.data().teslimSaati;
+                    else document.getElementById('statusTime').innerText = "";
 
-                    // HAZIR BİLDİRİMİ
                     if(durum === 'Prêt' || durum === 'Hazır') {
-                        box.style.borderColor = '#2ecc71'; // Yeşil çerçeve
+                        box.style.borderColor = '#2ecc71'; 
                         document.getElementById('statusText').style.color = '#2ecc71';
-                        // Titreşim (Android)
                         if(navigator.vibrate) navigator.vibrate([500, 200, 500]);
-                        alert("🍽️ VOTRE COMMANDE EST PRÊTE ! \nSiparişiniz Hazır!");
+                        alert("🍽️ VOTRE COMMANDE EST PRÊTE !");
                     }
                 } else {
                     box.style.display = 'none';
@@ -282,19 +413,34 @@
 
         function openOp(n, p, t) {
             suanki = {n,p,t}; document.getElementById('mDialog').style.display = 'flex';
-            document.getElementById('viandeArea').style.display = t.startsWith('tacos') ? 'block':'none';
+            // Tacos 1 veya 2 ise et seçimini göster
+            document.getElementById('viandeArea').style.display = (t === 'tacos1' || t === 'tacos2') ? 'block':'none';
             document.querySelectorAll('input[type=checkbox]').forEach(el=>el.checked=false);
         }
+        
+        function quick(n, p) {
+            sepet.push({n:n, p:p, v:[], s:[]});
+            up();
+        }
+
         function closeOp() { document.getElementById('mDialog').style.display = 'none'; }
+        
         function addItem() {
             let v=[], s=[];
             document.querySelectorAll('.vc:checked').forEach(e=>v.push(e.value));
             document.querySelectorAll('.sc:checked').forEach(e=>s.push(e.value));
-            if(suanki.t==='tacos1' && v.length>1) return alert("Max 1 Viande");
-            if(suanki.t==='tacos2' && v.length>2) return alert("Max 2 Viandes");
-            if(s.length>2) return alert("Max 2 Sauces");
+            
+            // Limit Kontrolleri
+            if(suanki.t==='tacos1' && v.length > 1) return alert("Choisissez 1 seule viande !");
+            if(suanki.t==='tacos2' && v.length > 2) return alert("Max 2 Viandes !");
+            if(s.length > 2) return alert("Max 2 Sauces !");
+            
+            // Tacos için et seçilmediyse uyar (İsteğe bağlı)
+            if((suanki.t==='tacos1' || suanki.t==='tacos2') && v.length===0) return alert("Veuillez choisir une viande.");
+
             sepet.push({...suanki, v, s}); up(); closeOp();
         }
+        
         function up() {
             let tot=sepet.reduce((a,b)=>a+b.p,0);
             document.getElementById('totVal').innerText=tot.toFixed(2)+"€";
@@ -302,25 +448,22 @@
         }
         function resetCart() { if(confirm("Vider?")) { sepet=[]; up(); document.getElementById('cartBar').style.display='none';}}
 
-        // --- SİPARİŞİ GÖNDERME (DATABASE + WHATSAPP) ---
+        // --- SİPARİŞİ GÖNDERME ---
         function sendWA() {
             if(sepet.length===0) return;
             const phone = localStorage.getItem('nova_user_phone');
-            
-            // Eğer giriş yapmadıysa numara sor
             let finalPhone = phone;
             if(!finalPhone) {
-                finalPhone = prompt("Numéro de téléphone pour le suivi :");
+                finalPhone = prompt("Votre numéro de téléphone pour le suivi :");
                 if(!finalPhone) return alert("Numéro requis !");
                 localStorage.setItem('nova_user_phone', finalPhone);
             }
 
-            // 1. Veritabanına Kaydet
             let ozet = "";
             sepet.forEach((it,i) => {
                 ozet += `${it.n}`;
-                if(it.v && it.v.length) ozet += ` (${it.v.join(',')})`;
-                if(it.s && it.s.length) ozet += ` [${it.s.join(',')}]`;
+                if(it.v && it.v.length) ozet += ` (${it.v.join(', ')})`;
+                if(it.s && it.s.length) ozet += ` [${it.s.join(', ')}]`;
                 ozet += "\n";
             });
 
@@ -328,15 +471,12 @@
                 musteriPhone: finalPhone,
                 icerik: ozet,
                 tutar: document.getElementById('totVal').innerText,
-                durum: "En Attente", // İlk durum: Bekliyor
+                durum: "En Attente",
                 teslimSaati: "",
                 tarih: new Date()
             }).then(() => {
-                // Takibi Başlat
                 listenOrder(finalPhone);
-
-                // 2. WhatsApp'ı Aç
-                let m = `*NOVA COMMANDE* (%2B Suivi App)%0AClient: ${finalPhone}%0A%0A`;
+                let m = `*NOVA COMMANDE*%0AClient: ${finalPhone}%0A%0A`;
                 sepet.forEach((it,i) => {
                     m += `${i+1}. ${it.n}`;
                     if(it.v && it.v.length) m += ` (${it.v.join(', ')})`;
@@ -345,14 +485,12 @@
                 });
                 m += `%0ATOTAL: ${document.getElementById('totVal').innerText}`;
                 window.open("https://wa.me/33769428182?text=" + m, "_blank");
-                
-                // Sepeti temizle ve menüye dön
                 sepet = []; up();
                 alert("Commande envoyée ! Suivez le statut en haut du menu.");
             });
         }
 
-        // --- GİRİŞ ---
+        // --- GİRİŞ / KAYIT ---
         function login() {
             const p = document.getElementById('login-phone').value.replace(/\s/g,'');
             if(!p) return alert("Numéro?");
@@ -379,8 +517,6 @@
             document.getElementById('qrcode').innerHTML="";
             new QRCode(document.getElementById('qrcode'),{text:p,width:160,height:160});
             localStorage.setItem('nova_user_phone', p);
-            
-            // Giriş yapınca sipariş var mı kontrol et
             listenOrder(p);
         }
         function switchAuth(t) {
