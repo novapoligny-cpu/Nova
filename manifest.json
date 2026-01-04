@@ -1,7 +1,7 @@
 {
-  "name": "NOVA",
+  "name": "NOVA App",
   "short_name": "NOVA",
-  "start_url": "client.html",
+  "start_url": "index.html",
   "display": "standalone",
   "background_color": "#000000",
   "theme_color": "#D4AF37",
@@ -10,8 +10,8 @@
     {
       "src": "logo.png",
       "sizes": "192x192",
-      "type": "image/png"
-   "purpose": "any maskable"
+      "type": "image/png",
+      "purpose": "any maskable"
     },
     {
       "src": "logo.png",
