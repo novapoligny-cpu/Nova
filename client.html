@@ -209,16 +209,43 @@
         }
 
         function login() {
-            const phone = document.getElementById('login-phone').value.trim();
-            if(!phone) return alert("Veuillez entrer votre numéro.");
-            const btn = document.querySelector("#login-form button");
-            btn.innerText = "Vérification...";
-            db.collection("musteriler").doc(phone).get().then((doc) => {
-                if(doc.exists) { openDashboard(doc.data().ad, phone, doc.data().puan, doc.data().harcanan || 0); } 
-                else { alert("Numéro introuvable."); switchTab('register'); document.getElementById('reg-phone').value = phone; }
-                btn.innerText = "Se Connecter";
-            }).catch(err => { alert("Erreur: " + err.message); btn.innerText = "Se Connecter"; });
+    // 1. Adım Başlıyor
+    const phone = document.getElementById('login-phone').value.trim();
+    if(!phone) return alert("Numara girmediniz!");
+    
+    const btn = document.querySelector("#login-form button");
+    btn.innerText = "Vérification...";
+    
+    // Bağlantı testi
+    alert("İşlem başlıyor... Numara: " + phone);
+    
+    if (!firebase || !db) {
+        alert("HATA: Firebase yüklenemedi! Sayfayı yenileyin.");
+        btn.innerText = "Se Connecter";
+        return;
+    }
+
+    // Veritabanı Sorgusu
+    db.collection("musteriler").doc(phone).get()
+    .then((doc) => {
+        alert("Bağlantı Başarılı! Sonuç kontrol ediliyor...");
+        if(doc.exists) { 
+            alert("Kayıt bulundu! Giriş yapılıyor.");
+            openDashboard(doc.data().ad, phone, doc.data().puan, doc.data().harcanan || 0); 
+        } else { 
+            alert("Numara kayıtlı değil! Kayıt ekranına yönlendiriliyorsunuz.");
+            switchTab('register'); 
+            document.getElementById('reg-phone').value = phone; 
+            btn.innerText = "Se Connecter";
         }
+    })
+    .catch(err => { 
+        // Hata buradaysa ekranda göreceğiz
+        alert("BÜYÜK HATA: " + err.message); 
+        btn.innerText = "Se Connecter"; 
+    });
+}
+
 
         function register() {
             const name = document.getElementById('reg-name').value.trim();
