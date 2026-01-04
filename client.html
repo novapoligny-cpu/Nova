@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>NOVA</title> <link rel="manifest" href="manifest.json">
+    <title>NOVA - Espace Client</title>
+    
+    <link rel="manifest" href="manifest.json">
     
     <meta name="theme-color" content="#0a0a0a">
     <meta name="mobile-web-app-capable" content="yes">
@@ -12,11 +14,11 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="NOVA">
     
-    <link rel="icon" type="image/png" href="logo.png?v=5">
-    <link rel="apple-touch-icon" href="logo.png?v=5">
-    <link rel="apple-touch-icon" sizes="152x152" href="logo.png?v=5">
-    <link rel="apple-touch-icon" sizes="180x180" href="logo.png?v=5">
-    <link rel="apple-touch-icon" sizes="167x167" href="logo.png?v=5">
+    <link rel="icon" type="image/png" href="logo.png?v=2">
+    <link rel="apple-touch-icon" href="logo.png?v=2">
+    <link rel="apple-touch-icon" sizes="152x152" href="logo.png?v=2">
+    <link rel="apple-touch-icon" sizes="180x180" href="logo.png?v=2">
+    <link rel="apple-touch-icon" sizes="167x167" href="logo.png?v=2">
     
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
@@ -151,13 +153,13 @@
         </div>
         
         <div class="quick-actions">
-            <a href="menu.html" target="_blank" class="action-btn">
+            <a href="MENU_LINKI_BURAYA" target="_blank" class="action-btn">
                 <i class="fa-solid fa-utensils"></i> Le Menu
             </a>
-            <a href="https://maps.google.com/?q=NOVA+Kebab" target="_blank" class="action-btn">
+            <a href="GOOGLE_MAPS_LINKI_BURAYA" target="_blank" class="action-btn">
                 <i class="fa-solid fa-location-dot"></i> Y aller
             </a>
-            <a href="https://www.instagram.com/novakebabpoligny" target="_blank" class="action-btn">
+            <a href="INSTAGRAM_LINKI_BURAYA" target="_blank" class="action-btn">
                 <i class="fa-brands fa-instagram"></i> Suivre
             </a>
             <a href="#" onclick="logout()" class="action-btn" style="border-color:#c0392b; color:#c0392b;">
@@ -180,9 +182,9 @@
 
         // LİNKLERİ GÜNCELLEYİN
         const LINKS = {
-            menu: "menu.html",
+            menu: "https://www.google.com",
             maps: "https://maps.google.com/?q=NOVA+Kebab",
-            instagram: "https://www.instagram.com/novakebabpoligny"
+            instagram: "https://instagram.com"
         };
 
         document.querySelector('a[href="MENU_LINKI_BURAYA"]').href = LINKS.menu;
