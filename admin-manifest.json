@@ -1,6 +1,6 @@
 {
-  "name": "NOVA App",
-  "short_name": "NOVA",
+  "name": "NOVA Admin",
+  "short_name": "Admin",
   "start_url": "admin.html",
   "display": "standalone",
   "background_color": "#000000",
