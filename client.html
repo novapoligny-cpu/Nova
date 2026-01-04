@@ -193,7 +193,9 @@
 
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
-
+// 🔥 Bu kod mobil bağlantı sorunlarını çözer 🔥
+db.settings({ experimentalForceLongPolling: true });
+        
         function switchTab(tab) {
             if(tab === 'login') {
                 document.getElementById('login-form').classList.remove('hidden');
