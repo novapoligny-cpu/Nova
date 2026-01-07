@@ -10,8 +10,8 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link rel="icon" type="image/png" href="logo.png?v=11">
-    <link rel="apple-touch-icon" href="logo.png?v=11">
+    <link rel="icon" type="image/png" href="logo.png?v=12">
+    <link rel="apple-touch-icon" href="logo.png?v=12">
     
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
@@ -105,6 +105,15 @@
             puis <b>"Sur l'écran d'accueil"</b> <i class="fa-regular fa-square-plus ios-icon"></i>
         </p>
         <button onclick="document.getElementById('ios-install-prompt').style.display='none'" style="background:transparent; color:#888; border:none; margin-top:10px;">Fermer</button>
+    </div>
+
+    <div id="customAlertModal" class="modal" style="z-index: 9999;">
+        <div class="modal-content" style="border: 2px solid var(--gold); box-shadow: 0 0 20px rgba(212, 175, 55, 0.5);">
+            <div style="font-size: 40px; margin-bottom: 10px;">🔔</div>
+            <h3 style="color: var(--gold); margin-bottom: 10px; text-transform: uppercase;">RESTAURANT NOVA</h3>
+            <p id="customAlertText" style="color: white; font-size: 16px; margin-bottom: 20px; line-height: 1.5;"></p>
+            <button onclick="document.getElementById('customAlertModal').style.display='none'" class="main-btn">C'EST COMPRIS !</button>
+        </div>
     </div>
 
     <div id="tab-loyalty" class="container">
@@ -282,22 +291,17 @@
 
         // --- INSTALL PROMPT (IOS/ANDROID) ---
         window.addEventListener('load', () => {
-            // Android Prompt
-            window.addEventListener('beforeinstallprompt', (e) => {
-                e.preventDefault();
-                // Android otomatik halleder veya butona bağlayabilirsin
-                // Şu an tarayıcı varsayılanı kullanacak
-            });
-
-            // iOS Prompt
+            window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); });
             const isIos = /iphone|ipad|ipod/.test(window.navigator.userAgent.toLowerCase());
             const isInStandaloneMode = ('standalone' in window.navigator) && (window.navigator.standalone);
-            
-            // Eğer iOS ise ve uygulama modunda değilse
-            if (isIos && !isInStandaloneMode) {
-                document.getElementById('ios-install-prompt').style.display = 'block';
-            }
+            if (isIos && !isInStandaloneMode) { document.getElementById('ios-install-prompt').style.display = 'block'; }
         });
+
+        // --- ÖZEL BİLDİRİM FONKSİYONU ---
+        function showCustomNotification(message) {
+            document.getElementById('customAlertText').innerText = message;
+            document.getElementById('customAlertModal').style.display = 'flex';
+        }
 
         // --- SİPARİŞ TAKİBİ & BİLDİRİM ---
         function listenOrder(phone) {
@@ -311,7 +315,7 @@
                     document.getElementById('statusText').innerText = durum;
                     if(doc.data().teslimSaati) document.getElementById('statusTime').innerText = "Heure : " + doc.data().teslimSaati;
 
-                    // Eğer durum 'Prêt' olduysa SES ÇAL ve TİTRE
+                    // Eğer durum 'Prêt' olduysa ve daha önce bildirim vermediysek
                     if((durum === 'Prêt' || durum === 'Hazır') && oldStatus !== durum) {
                         box.style.borderColor = '#2ecc71';
                         document.getElementById('statusText').style.color = '#2ecc71';
@@ -322,7 +326,8 @@
                         // Titret
                         if(navigator.vibrate) navigator.vibrate([500, 200, 500]);
                         
-                        alert("🔔 DING DONG! \nVOTRE COMMANDE EST PRÊTE ! \nSiparişiniz Hazır, Afiyet Olsun!");
+                        // 🔥 ÖZEL BİLDİRİMİ GÖSTER (Alert yerine) 🔥
+                        showCustomNotification("DING DONG! \nVOTRE COMMANDE EST PRÊTE ! \n\nBon appétit !");
                     }
                 } else {
                     box.style.display = 'none';
@@ -330,7 +335,7 @@
             });
         }
 
-        // --- DİĞER FONKSİYONLAR (Menü, Sepet, Giriş) ---
+        // --- DİĞER FONKSİYONLAR ---
         var sepet = [], suanki = null;
         function switchView(view) {
             document.querySelectorAll('.nav-item').forEach(e=>e.classList.remove('active'));
@@ -385,7 +390,8 @@
                 m += `%0ATOTAL: ${document.getElementById('totVal').innerText}`;
                 window.open("https://wa.me/33769428182?text=" + m, "_blank");
                 sepet = []; up();
-                alert("Commande envoyée !");
+                // BURADA DA ÖZEL BİLDİRİM KULLANALIM
+                showCustomNotification("Commande envoyée ! \nSuivez le statut en haut du menu.");
             });
         }
         function login() {
