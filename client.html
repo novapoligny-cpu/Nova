@@ -10,8 +10,8 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link rel="icon" type="image/png" href="logo.png?v=12">
-    <link rel="apple-touch-icon" href="logo.png?v=12">
+    <link rel="icon" type="image/png" href="logo.png?v=13">
+    <link rel="apple-touch-icon" href="logo.png?v=13">
     
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
@@ -57,6 +57,10 @@
         .ios-instruction { color: white; font-size: 14px; margin-bottom: 15px; line-height: 1.5; }
         .ios-icon { font-size: 24px; color: var(--gold); margin: 0 5px; vertical-align: middle; }
 
+        /* ÖZEL BİLDİRİM KUTUSU */
+        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 3000; align-items: center; justify-content: center; overflow-y: auto;}
+        .modal-content { background: #1a1a1a; width: 90%; max-width: 400px; margin: auto; padding: 20px; border-radius: 15px; border: 1px solid var(--gold); margin-top: 50px; margin-bottom: 50px;}
+
         /* SİPARİŞ DURUM KUTUSU */
         .order-status-box {
             background: #222; border: 2px solid var(--gold); border-radius: 15px;
@@ -86,9 +90,6 @@
         .cart-bar { position: fixed; bottom: 70px; left: 0; width: 100%; background: #111; border-top: 2px solid var(--gold); padding: 10px 20px; z-index: 1500; display: none; box-sizing: border-box; }
         .btn-wa { background: #25d366; color: white; border: none; padding: 10px 20px; border-radius: 20px; font-weight: bold; font-size: 0.9rem; cursor: pointer; display: flex; align-items: center; gap: 8px; }
 
-        /* MODAL */
-        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 3000; overflow-y: auto; align-items: center; justify-content: center; }
-        .modal-content { background: #1a1a1a; width: 90%; max-width: 400px; margin: auto; padding: 20px; border-radius: 15px; border: 1px solid var(--gold); margin-top: 50px; margin-bottom: 50px;}
         .opt-item { display: flex; align-items: center; gap: 8px; background: #000; padding: 10px; border-radius: 6px; border: 1px solid #333; font-size: 0.8rem; cursor: pointer; color: #fff; margin-bottom:5px;}
         #qrcode { display: flex; justify-content: center; margin: 20px 0; padding: 10px; background: white; border-radius: 10px; }
         #qrcode img { display: block; margin: auto; }
@@ -170,29 +171,60 @@
             <button class="menu-item-btn" onclick="openOp('Assiette Agneau', 15.50, 'plate')">Agneau<span class="price-tag">15.50€</span></button>
             <button class="menu-item-btn" onclick="openOp('Assiette Steak', 12.00, 'plate')">Steak<span class="price-tag">12€</span></button>
             <button class="menu-item-btn" onclick="openOp('Assiette Entrecôte', 16.00, 'plate')">Entrecôte<span class="price-tag">16€</span></button>
+            <button class="menu-item-btn" onclick="openOp('Assiette Falafels', 12.00, 'plate')">Falafels<span class="price-tag">12€</span></button>
             <button class="menu-item-btn" onclick="openOp('Assiette Mixte', 17.50, 'plate')">Mixte<span class="price-tag">17.50€</span></button>
+            <button class="menu-item-btn" onclick="openOp('Salade Grecque', 11.00, 'plate')">Salade Grecque<span class="price-tag">11€</span></button>
+            <button class="menu-item-btn" onclick="openOp('Salade Cesar', 12.50, 'plate')">Salade Cesar<span class="price-tag">12.50€</span></button>
         </div></div>
 
         <div class="cat-title">Les Sandwichs</div>
         <div class="menu-card"><h4>Seul ou Menu</h4><div class="menu-grid">
             <button class="menu-item-btn" onclick="openOp('Sandwich Kebab Seule', 7.50, 'sandwich')">Kebab Seul<span class="price-tag">7.50€</span></button>
             <button class="menu-item-btn" onclick="openOp('Sandwich Kebab Menu', 10.50, 'sandwich')">Kebab Menu<span class="price-tag">10.50€</span></button>
+            
             <button class="menu-item-btn" onclick="openOp('Galette Kebab Seule', 8.00, 'sandwich')">Galette Seul<span class="price-tag">8€</span></button>
             <button class="menu-item-btn" onclick="openOp('Galette Kebab Menu', 11.00, 'sandwich')">Galette Menu<span class="price-tag">11€</span></button>
+            
             <button class="menu-item-btn" onclick="openOp('Sandwich Poulet Seule', 8.00, 'sandwich')">Poulet Seul<span class="price-tag">8€</span></button>
             <button class="menu-item-btn" onclick="openOp('Sandwich Poulet Menu', 11.00, 'sandwich')">Poulet Menu<span class="price-tag">11€</span></button>
+            
+            <button class="menu-item-btn" onclick="openOp('Sandwich Kefta Seule', 8.00, 'sandwich')">Kefta Seul<span class="price-tag">8€</span></button>
+            <button class="menu-item-btn" onclick="openOp('Sandwich Kefta Menu', 11.00, 'sandwich')">Kefta Menu<span class="price-tag">11€</span></button>
+            
+            <button class="menu-item-btn" onclick="openOp('Sandwich Falafel Seule', 7.50, 'sandwich')">Falafel Seul<span class="price-tag">7.50€</span></button>
+            <button class="menu-item-btn" onclick="openOp('Sandwich Falafel Menu', 10.50, 'sandwich')">Falafel Menu<span class="price-tag">10.50€</span></button>
+            
+            <button class="menu-item-btn" onclick="openOp('Sandwich Americain Seule', 8.00, 'sandwich')">Americain Seul<span class="price-tag">8€</span></button>
+            <button class="menu-item-btn" onclick="openOp('Sandwich Americain Menu', 11.00, 'sandwich')">Americain Menu<span class="price-tag">11€</span></button>
+            
+            <button class="menu-item-btn" onclick="openOp('Sandwich Végétarien Seule', 7.00, 'sandwich')">Végétarien Seul<span class="price-tag">7€</span></button>
+            <button class="menu-item-btn" onclick="openOp('Sandwich Végétarien Menu', 10.00, 'sandwich')">Végétarien Menu<span class="price-tag">10€</span></button>
         </div></div>
 
         <div class="cat-title">Les Tacos</div>
         <div class="menu-card">
             <h4>Sauce Fromagère Incluse</h4>
-            <h5 style="color:var(--gold); margin:5px 0;">Tacos 1 Viande</h5>
+            <h5 style="color:var(--gold); margin:5px 0;">Tacos 1 Viande (Choix Liste)</h5>
             <div class="menu-grid">
-                <button class="menu-item-btn" onclick="openOp('Tacos Kebab Seul', 8.00, 'tacos1')">Kebab<span class="price-tag">8€</span></button>
-                <button class="menu-item-btn" onclick="openOp('Tacos Poulet Seul', 8.00, 'tacos1')">Poulet<span class="price-tag">8€</span></button>
-                <button class="menu-item-btn" onclick="openOp('Tacos Tenders Seul', 8.00, 'tacos1')">Tenders<span class="price-tag">8€</span></button>
-                <button class="menu-item-btn" onclick="openOp('Tacos 1 Viande Menu', 11.00, 'tacos1')">MENU<span class="price-tag">11€</span></button>
+                <button class="menu-item-btn" onclick="openOp('Tacos Kebab Seul', 8.00, 'tacos1')">Kebab Seul<span class="price-tag">8€</span></button>
+                <button class="menu-item-btn" onclick="openOp('Tacos Kebab Menu', 11.00, 'tacos1')">Kebab Menu<span class="price-tag">11€</span></button>
+                
+                <button class="menu-item-btn" onclick="openOp('Tacos Poulet Seul', 8.00, 'tacos1')">Poulet Seul<span class="price-tag">8€</span></button>
+                <button class="menu-item-btn" onclick="openOp('Tacos Poulet Menu', 11.00, 'tacos1')">Poulet Menu<span class="price-tag">11€</span></button>
+               
+                <button class="menu-item-btn" onclick="openOp('Tacos Steak Seul', 8.00, 'tacos1')">Steak Seul<span class="price-tag">8€</span></button>
+                <button class="menu-item-btn" onclick="openOp('Tacos Steak Menu', 11.00, 'tacos1')">Steak Menu<span class="price-tag">11€</span></button>
+                
+                <button class="menu-item-btn" onclick="openOp('Tacos Tenders Seul', 8.00, 'tacos1')">Tenders Seul<span class="price-tag">8€</span></button>
+                <button class="menu-item-btn" onclick="openOp('Tacos Tenders Menu', 11.00, 'tacos1')">Tenders Menu<span class="price-tag">11€</span></button>
+                
+                <button class="menu-item-btn" onclick="openOp('Tacos Nuggets Seul', 8.00, 'tacos1')">Nuggets Seul<span class="price-tag">8€</span></button>
+                <button class="menu-item-btn" onclick="openOp('Tacos Nuggets Menu', 11.00, 'tacos1')">Nuggets Menu<span class="price-tag">11€</span></button>
+                
+                <button class="menu-item-btn" onclick="openOp('Tacos Falafel Seul', 8.00, 'tacos1')">Falafel Seul<span class="price-tag">8€</span></button>
+                <button class="menu-item-btn" onclick="openOp('Tacos Falafel Menu', 11.00, 'tacos1')">Falafel Menu<span class="price-tag">11€</span></button>
             </div>
+            
             <h5 style="color:var(--gold); margin:15px 0 5px 0;">Tacos 2 Viandes</h5>
             <div class="menu-grid">
                 <button class="menu-item-btn" onclick="openOp('Tacos 2 Viandes Seule', 9.50, 'tacos2')">2 Viandes Seul<span class="price-tag">9.50€</span></button>
@@ -210,12 +242,53 @@
             <button class="menu-item-btn" onclick="openOp('Hamburger Nova Menu', 13.00, 'sandwich')">Nova Menu<span class="price-tag">13€</span></button>
         </div></div>
 
+        <div class="cat-title">Les Paninis</div>
+        <div class="menu-card"><div class="menu-grid">
+            <button class="menu-item-btn" onclick="openOp('Panini Kebab Seule', 7.00, 'sandwich')">Kebab Seul<span class="price-tag">7€</span></button>
+            <button class="menu-item-btn" onclick="openOp('Panini Kebab Menu', 10.00, 'sandwich')">Kebab Menu<span class="price-tag">10€</span></button>
+            
+            <button class="menu-item-btn" onclick="openOp('Panini Poulet Seule', 7.00, 'sandwich')">Poulet Seul<span class="price-tag">7€</span></button>
+            <button class="menu-item-btn" onclick="openOp('Panini Poulet Menu', 10.00, 'sandwich')">Poulet Menu<span class="price-tag">10€</span></button>
+            
+            <button class="menu-item-btn" onclick="openOp('Panini Steak Seule', 7.00, 'sandwich')">Steak Seul<span class="price-tag">7€</span></button>
+            <button class="menu-item-btn" onclick="openOp('Panini Steak Menu', 10.00, 'sandwich')">Steak Menu<span class="price-tag">10€</span></button>
+            
+            <button class="menu-item-btn" onclick="openOp('Panini Fromage Seule', 6.50, 'sandwich')">Fromage Seul<span class="price-tag">6.50€</span></button>
+            <button class="menu-item-btn" onclick="openOp('Panini Fromage Menu', 9.50, 'sandwich')">Fromage Menu<span class="price-tag">9.50€</span></button>
+        </div></div>
+
+        <div class="cat-title">Les Barquettes</div>
+        <div class="menu-card"><div class="menu-grid">
+            <button class="menu-item-btn" onclick="quick('Barquette Kebab Petite', 6.00)">Kebab Petite<span class="price-tag">6€</span></button>
+            <button class="menu-item-btn" onclick="quick('Barquette Kebab Grande', 10.00)">Kebab Grande<span class="price-tag">10€</span></button>
+            
+            <button class="menu-item-btn" onclick="quick('Nuggets 4pc', 3.50)">Nuggets 4pc<span class="price-tag">4€</span></button>
+            <button class="menu-item-btn" onclick="quick('Nuggets 6pc', 6.50)">Nuggets 6pc<span class="price-tag">6€</span></button>
+            
+            <button class="menu-item-btn" onclick="quick('Tenders 4pc', 5.00)">Tenders 4pc<span class="price-tag">5€</span></button>
+            <button class="menu-item-btn" onclick="quick('Tenders 6pc', 9.00)">Tenders 6pc<span class="price-tag">7€</span></button>
+            
+            <button class="menu-item-btn" onclick="quick('Falafels 5pc', 5.00)">Falafels 5pc<span class="price-tag">5€</span></button>
+            <button class="menu-item-btn" onclick="quick('Falafels 7pc', 7.00)">Falafels 7pc<span class="price-tag">7€</span></button>
+            
+            <button class="menu-item-btn" onclick="quick('Frites Petite', 2.50)">Frites Petite<span class="price-tag">2.50€</span></button>
+            <button class="menu-item-btn" onclick="quick('Frites Grande', 3.50)">Frites Grande<span class="price-tag">3.50€</span></button>
+        </div></div>
+
         <div class="cat-title">Boissons</div>
         <div class="menu-card"><div class="menu-grid">
             <button class="menu-item-btn" onclick="quick('Soft 33cl', 2.00)">Soft 33cl<span class="price-tag">2€</span></button>
             <button class="menu-item-btn" onclick="quick('Ayran', 1.50)">Ayran<span class="price-tag">1.50€</span></button>
             <button class="menu-item-btn" onclick="quick('Eau 50cl', 1.50)">Eau 50cl<span class="price-tag">1.50€</span></button>
             <button class="menu-item-btn" onclick="quick('Redbull', 3.00)">Redbull<span class="price-tag">3€</span></button>
+            
+            <button class="menu-item-btn" onclick="quick('Bière 1664 25cl', 2.70)">1664 25cl<span class="price-tag">2.70€</span></button>
+            <button class="menu-item-btn" onclick="quick('Bière Heineken 25cl', 2.70)">Heineken<span class="price-tag">2.70€</span></button>
+            <button class="menu-item-btn" onclick="quick('Bière Efes 33cl', 4.00)">Efes 33cl<span class="price-tag">4€</span></button>
+            <button class="menu-item-btn" onclick="quick('Bière Desperados 33cl', 4.00)">Desperados<span class="price-tag">4€</span></button>
+            
+            <button class="menu-item-btn" onclick="quick('Vin Rouge 75cl', 13.00)">Vin Rouge<span class="price-tag">13€</span></button>
+            <button class="menu-item-btn" onclick="quick('Vin Rose 75cl', 13.00)">Vin Rose<span class="price-tag">13€</span></button>
         </div></div>
         
         <div style="height:50px;"></div>
@@ -260,7 +333,7 @@
                     <label class="opt-item"><input type="checkbox" class="sc" value="Blanche"> Blanche</label>
                     <label class="opt-item"><input type="checkbox" class="sc" value="Algerienne"> Algerienne</label>
                     <label class="opt-item"><input type="checkbox" class="sc" value="Samourai"> Samourai</label>
-                    <label class="opt-item"><input type="checkbox" class="sc" value="Biggy"> Biggy</label>
+                    <label class="opt-item"><input type="checkbox" class="sc" value="Moutarde"> Moutarde</label>
                     <label class="opt-item"><input type="checkbox" class="sc" value="Mayo"> Mayo</label>
                     <label class="opt-item"><input type="checkbox" class="sc" value="Ketchup"> Ketchup</label>
                     <label class="opt-item"><input type="checkbox" class="sc" value="Harissa"> Harissa</label>
@@ -326,7 +399,7 @@
                         // Titret
                         if(navigator.vibrate) navigator.vibrate([500, 200, 500]);
                         
-                        // 🔥 ÖZEL BİLDİRİMİ GÖSTER (Alert yerine) 🔥
+                        // 🔥 ÖZEL BİLDİRİMİ GÖSTER 🔥
                         showCustomNotification("DING DONG! \nVOTRE COMMANDE EST PRÊTE ! \n\nBon appétit !");
                     }
                 } else {
@@ -390,7 +463,7 @@
                 m += `%0ATOTAL: ${document.getElementById('totVal').innerText}`;
                 window.open("https://wa.me/33769428182?text=" + m, "_blank");
                 sepet = []; up();
-                // BURADA DA ÖZEL BİLDİRİM KULLANALIM
+                // ÖZEL BİLDİRİM
                 showCustomNotification("Commande envoyée ! \nSuivez le statut en haut du menu.");
             });
         }
